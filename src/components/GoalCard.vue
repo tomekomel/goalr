@@ -25,16 +25,16 @@ const statusConfig: Record<GoalStatus, { icon: any, color: string }> = {
     <!-- Header: Title & Actions -->
     <div class="flex justify-between items-start mb-2 gap-3">
       <h3 class="font-semibold text-slate-800 leading-tight">{{ goal.title }}</h3>
-      
+
       <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-        <button 
+        <button
           @click="$emit('edit', goal)"
           class="text-slate-300 hover:text-primary transition-colors p-1"
           title="Edit Goal"
         >
           <Pencil :size="14" />
         </button>
-        <button 
+        <button
           @click="$emit('delete', goal.id)"
           class="text-slate-300 hover:text-red-400 transition-colors p-1"
           title="Delete Goal"
@@ -46,7 +46,7 @@ const statusConfig: Record<GoalStatus, { icon: any, color: string }> = {
 
     <!-- Description -->
     <p class="text-slate-500 text-sm leading-relaxed mb-4">{{ goal.description }}</p>
-    
+
     <!-- Footer: Date & Status -->
     <div class="flex items-center justify-between pt-2 border-t border-slate-50">
       <!-- Date -->

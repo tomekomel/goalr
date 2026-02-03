@@ -40,8 +40,8 @@ const onDragChange = () => {
       @change="onDragChange"
     >
       <template #item="{ element }">
-        <GoalCard 
-          :goal="element" 
+        <GoalCard
+          :goal="element"
           @delete="$emit('delete-goal', $event)"
           @edit="$emit('edit-goal', $event)"
         />
