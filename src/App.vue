@@ -159,14 +159,14 @@ const deleteGoal = async (id: string) => {
           <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
             <Target :size="24" />
           </div>
-          <h1 class="text-4xl font-black text-slate-900 tracking-tight italic">goalr.</h1>
+          <h1 class="text-4xl font-black text-slate-900 tracking-tighter italic">goalr.</h1>
         </div>
         <p class="text-slate-500 font-medium">Design your future, step by step.</p>
       </div>
 
       <button
         @click="openAddModal"
-        class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-slate-200 flex items-center gap-2"
+        class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-slate-200 flex items-center gap-2 cursor-pointer"
       >
         <Plus :size="20" />
         Add Goal

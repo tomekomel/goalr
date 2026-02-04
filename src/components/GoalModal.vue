@@ -34,6 +34,14 @@ const handleSubmit = () => {
 const periods: GoalPeriod[] = ['weekly', 'monthly', 'yearly'];
 const statuses: GoalStatus[] = ['planned', 'to-do', 'in-progress', 'done', 'archived'];
 
+const statusColors: Record<GoalStatus, string> = {
+  'planned': 'bg-slate-500 border-slate-500 text-white shadow-slate-500/30',
+  'to-do': 'bg-blue-500 border-blue-500 text-white shadow-blue-500/30',
+  'in-progress': 'bg-amber-500 border-amber-500 text-white shadow-amber-500/30',
+  'done': 'bg-emerald-500 border-emerald-500 text-white shadow-emerald-500/30',
+  'archived': 'bg-stone-500 border-stone-500 text-white shadow-stone-500/30',
+};
+
 const formatStatus = (s: string) => s.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 </script>
 
@@ -107,9 +115,9 @@ const formatStatus = (s: string) => s.split('-').map(word => word.charAt(0).toUp
                 type="button"
                 @click="form.status = s"
                 :class="[
-                  'cursor-pointer py-1.5 px-3 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border',
+                  'cursor-pointer py-1.5 px-3 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border shadow-sm',
                   form.status === s
-                    ? 'bg-slate-800 text-white border-slate-800 shadow-md'
+                    ? statusColors[s]
                     : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
                 ]"
               >

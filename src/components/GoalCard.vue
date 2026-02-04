@@ -11,17 +11,20 @@ const emit = defineEmits<{
   (e: 'edit', goal: Goal): void;
 }>();
 
-const statusConfig: Record<GoalStatus, { icon: any, color: string }> = {
-  'planned': { icon: Circle, color: 'text-slate-400' },
-  'to-do': { icon: CircleDashed, color: 'text-blue-500' },
-  'in-progress': { icon: Timer, color: 'text-amber-500' },
-  'done': { icon: CheckCircle2, color: 'text-emerald-500' },
-  'archived': { icon: Archive, color: 'text-stone-400' },
+const statusConfig: Record<GoalStatus, { icon: any, color: string, borderClass: string }> = {
+  'planned': { icon: Circle, color: 'text-slate-400', borderClass: 'border-l-slate-400' },
+  'to-do': { icon: CircleDashed, color: 'text-blue-500', borderClass: 'border-l-blue-500' },
+  'in-progress': { icon: Timer, color: 'text-amber-500', borderClass: 'border-l-amber-500' },
+  'done': { icon: CheckCircle2, color: 'text-emerald-500', borderClass: 'border-l-emerald-500' },
+  'archived': { icon: Archive, color: 'text-stone-400', borderClass: 'border-l-stone-400' },
 };
 </script>
 
 <template>
-  <div class="bg-white p-5 rounded-lg card-shadow border border-slate-100 group relative hover:border-slate-200 transition-colors">
+  <div
+    class="bg-white p-5 rounded-lg card-shadow border border-slate-100 border-l-[3px] group relative hover:border-slate-200 transition-colors"
+    :class="statusConfig[goal.status].borderClass"
+  >
     <!-- Header: Title & Actions -->
     <div class="flex justify-between items-start mb-2 gap-3">
       <h3 class="font-semibold text-slate-800 leading-tight">{{ goal.title }}</h3>
