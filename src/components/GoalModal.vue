@@ -4,26 +4,25 @@ import { X } from 'lucide-vue-next';
 import type { Goal, GoalPeriod, GoalStatus } from '../types';
 
 const props = defineProps<{
-  isOpen: boolean; // Kept for compatibility, though parent handles rendering
+  isOpen: boolean;
   goal?: Goal | null;
 }>();
 
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'save', goal: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus }): void;
+  (e: 'save', goal: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus; progress: number }): void;
 }>();
 
-// Initialize form directly from props (assumes component is remounted on open)
 const form = reactive({
   title: props.goal?.title ?? '',
   description: props.goal?.description ?? '',
   period: props.goal?.period ?? 'weekly',
   status: props.goal?.status ?? 'planned',
+  progress: props.goal?.progress ?? 0,
 });
 
 const handleSubmit = () => {
   if (!form.title.trim()) return;
-
   emit('save', {
     id: props.goal?.id,
     ...form
@@ -43,6 +42,27 @@ const statusColors: Record<GoalStatus, string> = {
 };
 
 const formatStatus = (s: string) => s.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+const setStatus = (s: GoalStatus) => {
+  form.status = s;
+  if (s === 'done') {
+    form.progress = 100;
+  } else if (s === 'planned' || s === 'to-do') {
+    form.progress = 0;
+  }
+  // For 'in-progress' we keep the current value, or default to 10 if it was 0
+  if (s === 'in-progress' && form.progress === 0) {
+    form.progress = 10;
+  }
+  if (s === 'in-progress' && form.progress === 100) {
+    // If coming from done, maybe lower it slightly to indicate not done? Or keep it.
+    // Let's keep it, user will adjust slider.
+  }
+};
+
+// Also watch progress to auto-complete if dragged to 100?
+// Optional UX: if user drags to 100, set status to done?
+// Let's keep it simple for now.
 </script>
 
 <template>
@@ -82,6 +102,24 @@ const formatStatus = (s: string) => s.split('-').map(word => word.charAt(0).toUp
           ></textarea>
         </div>
 
+        <!-- Progress Slider (Only for In-Progress) -->
+        <div v-if="form.status === 'in-progress'" class="animate-in slide-in-from-top-2 fade-in duration-300">
+           <div class="flex justify-between items-center mb-3">
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Current Progress</label>
+            <span class="text-xs font-black text-amber-500">{{ form.progress }}%</span>
+           </div>
+           <div class="relative flex items-center h-4">
+             <input 
+                type="range" 
+                v-model.number="form.progress" 
+                min="0" 
+                max="100" 
+                step="5"
+                class="w-full h-1 bg-slate-100 rounded-full appearance-none cursor-pointer accent-amber-500 custom-slider"
+             />
+           </div>
+        </div>
+
         <!-- Period & Status Grid -->
         <div class="grid grid-cols-1 gap-6">
           <!-- Period -->
@@ -113,7 +151,7 @@ const formatStatus = (s: string) => s.split('-').map(word => word.charAt(0).toUp
                 v-for="s in statuses"
                 :key="s"
                 type="button"
-                @click="form.status = s"
+                @click="setStatus(s)"
                 :class="[
                   'cursor-pointer py-1.5 px-3 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border shadow-sm',
                   form.status === s

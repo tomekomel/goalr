@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { Plus, Target } from 'lucide-vue-next';
+import { Plus, Target, LogOut } from 'lucide-vue-next';
 import { supabase } from './supabase';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
 import GoalColumn from './components/GoalColumn.vue';
 import GoalModal from './components/GoalModal.vue';
+import AuthScreen from './components/AuthScreen.vue';
 
+const session = ref<any>(null);
 const isModalOpen = ref(false);
 const editingGoal = ref<Goal | null>(null);
 
 const goals = ref<Goal[]>([]);
 
 const fetchGoals = async () => {
+  if (!session.value) return;
+
   const { data, error } = await supabase
     .from('goals')
     .select('*')
@@ -29,14 +33,28 @@ const fetchGoals = async () => {
       description: g.description,
       period: g.period as GoalPeriod,
       status: (g.status || 'planned') as GoalStatus,
+      progress: g.progress || 0,
       createdAt: new Date(g.created_at).getTime()
     }));
   }
 };
 
 onMounted(() => {
-  fetchGoals();
+  supabase.auth.getSession().then(({ data }) => {
+    session.value = data.session;
+    if (session.value) fetchGoals();
+  });
+
+  supabase.auth.onAuthStateChange((_, _session) => {
+    session.value = _session;
+    if (_session) fetchGoals();
+    else goals.value = [];
+  });
 });
+
+const handleSignOut = async () => {
+  await supabase.auth.signOut();
+};
 
 const getGoalsByPeriod = (period: GoalPeriod) => {
   return goals.value.filter(g => g.period === period);
@@ -78,13 +96,17 @@ const openEditModal = (goal: Goal) => {
   isModalOpen.value = true;
 };
 
-const saveGoal = async (goalData: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus }) => {
+const saveGoal = async (goalData: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus; progress: number }) => {
+  if (!session.value) return;
+
   const payload = {
     title: goalData.title,
     description: goalData.description,
     period: goalData.period,
     status: goalData.status,
-    updated_at: new Date().toISOString()
+    progress: goalData.progress,
+    updated_at: new Date().toISOString(),
+    user_id: session.value.user.id
   };
 
   if (goalData.id) {
@@ -124,6 +146,7 @@ const saveGoal = async (goalData: { id?: string; title: string; description: str
         description: data.description,
         period: data.period as GoalPeriod,
         status: data.status as GoalStatus,
+        progress: data.progress ?? 0,
         createdAt: new Date(data.created_at).getTime(),
       };
       goals.value.unshift(newGoal); // Add to top
@@ -151,65 +174,81 @@ const deleteGoal = async (id: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen pb-20">
-    <!-- Header -->
-    <header class="max-w-7xl mx-auto px-6 py-12 flex justify-between items-end">
-      <div>
-        <div class="flex items-center gap-3 mb-2">
-          <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
-            <Target :size="24" />
+  <div class="min-h-screen bg-slate-50">
+    <!-- Authenticated App -->
+    <div v-if="session" class="pb-20">
+      <!-- Header -->
+      <header class="max-w-7xl mx-auto px-6 py-12 flex justify-between items-end">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
+              <Target :size="24" />
+            </div>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tighter italic">goalr.</h1>
           </div>
-          <h1 class="text-4xl font-black text-slate-900 tracking-tighter italic">goalr.</h1>
+          <p class="text-slate-500 font-medium">Design your future, step by step.</p>
         </div>
-        <p class="text-slate-500 font-medium">Design your future, step by step.</p>
-      </div>
 
-      <button
-        @click="openAddModal"
-        class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-slate-200 flex items-center gap-2 cursor-pointer"
-      >
-        <Plus :size="20" />
-        Add Goal
-      </button>
-    </header>
+        <div class="flex items-center gap-4">
+           <button
+            @click="handleSignOut"
+            class="bg-white hover:bg-slate-50 text-slate-500 px-4 py-3.5 rounded-2xl font-bold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2"
+            title="Sign Out"
+          >
+            <LogOut :size="20" />
+          </button>
+          
+          <button
+            @click="openAddModal"
+            class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-slate-200 flex items-center gap-2 cursor-pointer"
+          >
+            <Plus :size="20" />
+            Add Goal
+          </button>
+        </div>
+      </header>
 
-    <!-- Board -->
-    <main class="max-w-7xl mx-auto px-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <GoalColumn
-          title="Weekly"
-          period="weekly"
-          :goals="getGoalsByPeriod('weekly')"
-          @update:goals="updateGoalsForPeriod('weekly', $event)"
-          @delete-goal="deleteGoal"
-          @edit-goal="openEditModal"
-        />
-        <GoalColumn
-          title="Monthly"
-          period="monthly"
-          :goals="getGoalsByPeriod('monthly')"
-          @update:goals="updateGoalsForPeriod('monthly', $event)"
-          @delete-goal="deleteGoal"
-          @edit-goal="openEditModal"
-        />
-        <GoalColumn
-          title="Yearly"
-          period="yearly"
-          :goals="getGoalsByPeriod('yearly')"
-          @update:goals="updateGoalsForPeriod('yearly', $event)"
-          @delete-goal="deleteGoal"
-          @edit-goal="openEditModal"
-        />
-      </div>
-    </main>
+      <!-- Board -->
+      <main class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <GoalColumn
+            title="Weekly"
+            period="weekly"
+            :goals="getGoalsByPeriod('weekly')"
+            @update:goals="updateGoalsForPeriod('weekly', $event)"
+            @delete-goal="deleteGoal"
+            @edit-goal="openEditModal"
+          />
+          <GoalColumn
+            title="Monthly"
+            period="monthly"
+            :goals="getGoalsByPeriod('monthly')"
+            @update:goals="updateGoalsForPeriod('monthly', $event)"
+            @delete-goal="deleteGoal"
+            @edit-goal="openEditModal"
+          />
+          <GoalColumn
+            title="Yearly"
+            period="yearly"
+            :goals="getGoalsByPeriod('yearly')"
+            @update:goals="updateGoalsForPeriod('yearly', $event)"
+            @delete-goal="deleteGoal"
+            @edit-goal="openEditModal"
+          />
+        </div>
+      </main>
 
-    <!-- Modal -->
-    <GoalModal
-      v-if="isModalOpen"
-      :is-open="isModalOpen"
-      :goal="editingGoal"
-      @close="isModalOpen = false"
-      @save="saveGoal"
-    />
+      <!-- Modal -->
+      <GoalModal
+        v-if="isModalOpen"
+        :is-open="isModalOpen"
+        :goal="editingGoal"
+        @close="isModalOpen = false"
+        @save="saveGoal"
+      />
+    </div>
+
+    <!-- Login Screen -->
+    <AuthScreen v-else />
   </div>
 </template>

@@ -7,10 +7,6 @@ export interface Goal {
   description: string;
   period: GoalPeriod;
   status: GoalStatus;
+  progress: number; // 0-100
   createdAt: number;
-}
-
-export interface Column {
-  id: GoalPeriod;
-  title: string;
 }
