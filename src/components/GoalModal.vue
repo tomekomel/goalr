@@ -36,7 +36,7 @@ const statuses: GoalStatus[] = ['planned', 'to-do', 'in-progress', 'done', 'arch
 const statusColors: Record<GoalStatus, string> = {
   'planned': 'bg-slate-500 border-slate-500 text-white shadow-slate-500/30',
   'to-do': 'bg-blue-500 border-blue-500 text-white shadow-blue-500/30',
-  'in-progress': 'bg-amber-500 border-amber-500 text-white shadow-amber-500/30',
+  'in-progress': 'bg-violet-500 border-violet-500 text-white shadow-violet-500/30',
   'done': 'bg-emerald-500 border-emerald-500 text-white shadow-emerald-500/30',
   'archived': 'bg-stone-500 border-stone-500 text-white shadow-stone-500/30',
 };
@@ -106,7 +106,7 @@ const setStatus = (s: GoalStatus) => {
         <div v-if="form.status === 'in-progress'" class="animate-in slide-in-from-top-2 fade-in duration-300">
            <div class="flex justify-between items-center mb-3">
             <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Current Progress</label>
-            <span class="text-xs font-black text-amber-500">{{ form.progress }}%</span>
+            <span class="text-xs font-black text-emerald-600">{{ form.progress }}%</span>
            </div>
            <div class="relative flex items-center h-4">
              <input 
@@ -115,7 +115,7 @@ const setStatus = (s: GoalStatus) => {
                 min="0" 
                 max="100" 
                 step="5"
-                class="w-full h-1 bg-slate-100 rounded-full appearance-none cursor-pointer accent-amber-500 custom-slider"
+                class="w-full h-1 bg-slate-100 rounded-full appearance-none cursor-pointer accent-emerald-500 custom-slider"
              />
            </div>
         </div>
@@ -167,7 +167,7 @@ const setStatus = (s: GoalStatus) => {
 
         <button
           type="submit"
-          class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-colors shadow-xl shadow-slate-200 mt-2"
+          class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-colors shadow-xl shadow-emerald-200 mt-2"
         >
           {{ goal ? 'Save Changes' : 'Add Goal' }}
         </button>

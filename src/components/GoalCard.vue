@@ -14,8 +14,8 @@ const emit = defineEmits<{
 const statusConfig: Record<GoalStatus, { icon: any, color: string, bg: string, barColor?: string }> = {
   'planned': { icon: Circle, color: 'text-slate-500', bg: 'bg-slate-100' },
   'to-do': { icon: CircleDashed, color: 'text-blue-600', bg: 'bg-blue-50' },
-  'in-progress': { icon: Timer, color: 'text-amber-600', bg: 'bg-amber-50', barColor: 'bg-amber-500' },
-  'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', barColor: 'bg-emerald-500' },
+  'in-progress': { icon: Timer, color: 'text-violet-600', bg: 'bg-violet-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
+  'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
   'archived': { icon: Archive, color: 'text-stone-500', bg: 'bg-stone-100' },
 };
 
