@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { Plus, Target, LogOut } from 'lucide-vue-next';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive } from 'lucide-vue-next';
 import { supabase } from './supabase';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
 import GoalColumn from './components/GoalColumn.vue';
@@ -10,6 +10,15 @@ import AuthScreen from './components/AuthScreen.vue';
 const session = ref<any>(null);
 const isModalOpen = ref(false);
 const editingGoal = ref<Goal | null>(null);
+
+type ViewType = 'dashboard' | 'backlog' | 'archive';
+const currentView = ref<ViewType>('dashboard');
+
+const views = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'backlog', label: 'Backlog', icon: ListTodo },
+  { id: 'archive', label: 'Archive', icon: Archive },
+];
 
 const goals = ref<Goal[]>([]);
 
@@ -57,7 +66,17 @@ const handleSignOut = async () => {
 };
 
 const getGoalsByPeriod = (period: GoalPeriod) => {
-  return goals.value.filter(g => g.period === period);
+  const allPeriodGoals = goals.value.filter(g => g.period === period);
+  
+  if (currentView.value === 'dashboard') {
+    return allPeriodGoals.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
+  } else if (currentView.value === 'backlog') {
+    return allPeriodGoals.filter(g => g.status === 'planned');
+  } else if (currentView.value === 'archive') {
+    return allPeriodGoals.filter(g => g.status === 'archived');
+  }
+  
+  return [];
 };
 
 const updateGoalsForPeriod = async (period: GoalPeriod, newGoals: Goal[]) => {
@@ -178,32 +197,52 @@ const deleteGoal = async (id: string) => {
     <!-- Authenticated App -->
     <div v-if="session" class="pb-20">
       <!-- Header -->
-      <header class="max-w-7xl mx-auto px-6 py-12 flex justify-between items-end">
-        <div>
-          <div class="flex items-center gap-3 mb-2">
-            <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
-              <Target :size="24" />
+      <header class="max-w-7xl mx-auto px-6 pt-12 pb-8">
+        <div class="flex justify-between items-end mb-8">
+          <div>
+            <div class="flex items-center gap-3 mb-2">
+              <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
+                <Target :size="24" />
+              </div>
+              <h1 class="text-4xl font-black text-slate-900 tracking-tighter">goalr.</h1>
             </div>
-            <h1 class="text-4xl font-black text-slate-900 tracking-tighter">goalr.</h1>
+            <p class="text-slate-500 font-medium">Design your future, step by step.</p>
           </div>
-          <p class="text-slate-500 font-medium">Design your future, step by step.</p>
+
+          <div class="flex items-center gap-4">
+             <button
+              @click="handleSignOut"
+              class="bg-white hover:bg-slate-50 text-slate-500 px-4 py-3.5 rounded-2xl font-bold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2"
+              title="Sign Out"
+            >
+              <LogOut :size="20" />
+            </button>
+            
+            <button
+              @click="openAddModal"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-emerald-200 flex items-center gap-2 cursor-pointer"
+            >
+              <Plus :size="20" />
+              Add Goal
+            </button>
+          </div>
         </div>
 
-        <div class="flex items-center gap-4">
-           <button
-            @click="handleSignOut"
-            class="bg-white hover:bg-slate-50 text-slate-500 px-4 py-3.5 rounded-2xl font-bold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2"
-            title="Sign Out"
-          >
-            <LogOut :size="20" />
-          </button>
-          
+        <!-- Navigation Tabs -->
+        <div class="flex items-center gap-2 border-b border-slate-200 pb-1">
           <button
-            @click="openAddModal"
-            class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-emerald-200 flex items-center gap-2 cursor-pointer"
+            v-for="view in views"
+            :key="view.id"
+            @click="currentView = view.id as ViewType"
+            class="flex items-center gap-2 px-4 py-3 rounded-t-xl text-sm font-bold transition-all border-b-2"
+            :class="[
+              currentView === view.id 
+                ? 'text-emerald-600 border-emerald-600 bg-emerald-50/50' 
+                : 'text-slate-500 border-transparent hover:text-slate-700 hover:bg-slate-100/50'
+            ]"
           >
-            <Plus :size="20" />
-            Add Goal
+            <component :is="view.icon" :size="16" />
+            {{ view.label }}
           </button>
         </div>
       </header>
