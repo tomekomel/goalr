@@ -46,21 +46,6 @@ watch(() => form.period, (newPeriod) => {
   }
 });
 
-const monthValue = computed({
-  get: () => form.targetDate.substring(0, 7), // YYYY-MM
-  set: (val: string) => {
-    form.targetDate = `${val}-01`;
-  }
-});
-
-const yearValue = computed({
-  get: () => parseInt(form.targetDate.substring(0, 4)),
-  set: (val: number) => {
-    const month = form.targetDate.substring(5, 7) || '01';
-    form.targetDate = `${val}-${month}-01`;
-  }
-});
-
 const months = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'

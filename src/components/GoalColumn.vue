@@ -40,8 +40,14 @@ const containerClasses = {
 
 const headerClasses = {
   'default': 'text-slate-700',
-  'highlight': 'text-slate-900', // Darker text for emphasis without gradient
+  'highlight': 'text-slate-900',
   'compact': 'text-slate-500 text-sm uppercase tracking-wide',
+};
+
+const gridClasses = {
+  'default': 'grid-cols-1',
+  'highlight': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+  'compact': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
 };
 </script>
 
@@ -67,18 +73,17 @@ const headerClasses = {
       v-model="localGoals"
       group="goals"
       item-key="id"
-      class="flex-1 flex flex-wrap content-start gap-3 min-h-[100px]"
+      class="flex-1 grid content-start gap-3 min-h-[100px]"
+      :class="gridClasses[variant]"
       ghost-class="ghost-card"
       @change="onDragChange"
     >
       <template #item="{ element }">
-        <div class="w-full sm:w-[280px]"> <!-- Wrapper to control card width -->
-          <GoalCard
-            :goal="element"
-            @delete="$emit('delete-goal', $event)"
-            @edit="$emit('edit-goal', $event)"
-          />
-        </div>
+        <GoalCard
+          :goal="element"
+          @delete="$emit('delete-goal', $event)"
+          @edit="$emit('edit-goal', $event)"
+        />
       </template>
     </draggable>
   </div>

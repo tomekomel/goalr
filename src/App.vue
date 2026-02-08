@@ -1,13 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive, X } from 'lucide-vue-next';
 import { supabase } from './supabase';
+import type { Session } from '@supabase/supabase-js';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
 import GoalColumn from './components/GoalColumn.vue';
 import GoalModal from './components/GoalModal.vue';
 import AuthScreen from './components/AuthScreen.vue';
 
-const session = ref<any>(null);
+const session = ref<Session | null>(null);
+
+// Toast notifications
+const toasts = ref<{ id: number; message: string }[]>([]);
+let toastId = 0;
+
+const showError = (message: string) => {
+  const id = ++toastId;
+  toasts.value.push({ id, message });
+  setTimeout(() => {
+    toasts.value = toasts.value.filter(t => t.id !== id);
+  }, 5000);
+};
+
+const dismissToast = (id: number) => {
+  toasts.value = toasts.value.filter(t => t.id !== id);
+};
 const isModalOpen = ref(false);
 const editingGoal = ref<Goal | null>(null);
 
@@ -43,7 +60,7 @@ const fetchGoals = async () => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    console.error('Error fetching goals:', error);
+    showError('Failed to load goals. Please try refreshing the page.');
     return;
   }
 
@@ -65,59 +82,73 @@ const fetchGoals = async () => {
   }
 };
 
+let authSubscription: { unsubscribe: () => void } | null = null;
+
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
     session.value = data.session;
     if (session.value) fetchGoals();
   });
 
-  supabase.auth.onAuthStateChange((_, _session) => {
+  const { data } = supabase.auth.onAuthStateChange((_, _session) => {
     session.value = _session;
     if (_session) fetchGoals();
     else goals.value = [];
   });
+  authSubscription = data.subscription;
+});
+
+onUnmounted(() => {
+  authSubscription?.unsubscribe();
 });
 
 const handleSignOut = async () => {
   await supabase.auth.signOut();
 };
 
-const getFilteredGoals = (period: GoalPeriod, weekNumber?: number) => {
-  let filtered = goals.value.filter(g => g.period === period);
+const currentMonthStr = computed(() => {
+  const now = currentDate.value;
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+});
+const currentYearStr = computed(() => `${currentDate.value.getFullYear()}`);
 
-  // Filter by Status based on View
+const filterByView = (list: Goal[]) => {
   if (currentView.value === 'dashboard') {
-    filtered = filtered.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
+    return list.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
   } else if (currentView.value === 'backlog') {
-    filtered = filtered.filter(g => g.status === 'planned');
+    return list.filter(g => g.status === 'planned');
   } else if (currentView.value === 'archive') {
-    filtered = filtered.filter(g => g.status === 'archived');
+    return list.filter(g => g.status === 'archived');
   }
-
-  // Filter by Date Context
-  const now = new Date();
-  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  const currentYearStr = `${now.getFullYear()}`;
-
-  if (period === 'monthly' || period === 'weekly') {
-     filtered = filtered.filter(g => {
-        if (!g.targetDate) return true; // Legacy goals show up
-        return g.targetDate.startsWith(currentMonthStr);
-     });
-  } else if (period === 'yearly') {
-     filtered = filtered.filter(g => {
-        if (!g.targetDate) return true;
-        return g.targetDate.startsWith(currentYearStr);
-     });
-  }
-
-  // Filter by Week Number
-  if (period === 'weekly' && weekNumber !== undefined) {
-    filtered = filtered.filter(g => g.weekNumber === weekNumber);
-  }
-
-  return filtered;
+  return list;
 };
+
+const filterByDate = (list: Goal[], period: GoalPeriod) => {
+  if (period === 'monthly' || period === 'weekly') {
+    return list.filter(g => !g.targetDate || g.targetDate.startsWith(currentMonthStr.value));
+  } else if (period === 'yearly') {
+    return list.filter(g => !g.targetDate || g.targetDate.startsWith(currentYearStr.value));
+  }
+  return list;
+};
+
+const monthlyGoals = computed(() => {
+  const byPeriod = goals.value.filter(g => g.period === 'monthly');
+  return filterByDate(filterByView(byPeriod), 'monthly');
+});
+
+const weeklyGoals = computed(() => {
+  const byPeriod = goals.value.filter(g => g.period === 'weekly');
+  return filterByDate(filterByView(byPeriod), 'weekly');
+});
+
+const getWeekGoals = (weekNumber: number) =>
+  weeklyGoals.value.filter(g => g.weekNumber === weekNumber);
+
+const yearlyGoals = computed(() => {
+  const byPeriod = goals.value.filter(g => g.period === 'yearly');
+  return filterByDate(filterByView(byPeriod), 'yearly');
+});
 
 const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
   // Find goals that don't match the new context
@@ -148,28 +179,23 @@ const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number },
     return updated || g;
   });
 
-  // Persist to Supabase
-  for (const goal of updatedGoals) {
-    const payload: any = {
-      period: context.period,
-      target_date: targetDate,
-      updated_at: new Date().toISOString()
-    };
-    
-    if (context.weekNumber !== undefined) {
-        payload.week_number = context.weekNumber;
-    } else {
-        payload.week_number = null;
-    }
+  // Persist to Supabase (parallel)
+  const payload = {
+    period: context.period,
+    target_date: targetDate,
+    week_number: context.weekNumber ?? null,
+    updated_at: new Date().toISOString()
+  };
 
-    const { error } = await supabase
-      .from('goals')
-      .update(payload)
-      .eq('id', goal.id);
+  const results = await Promise.all(
+    updatedGoals.map(goal =>
+      supabase.from('goals').update(payload).eq('id', goal.id)
+    )
+  );
 
-    if (error) {
-      console.error(`Failed to update goal ${goal.id}:`, error);
-    }
+  const failed = results.filter(r => r.error);
+  if (failed.length > 0) {
+    showError(`Failed to update ${failed.length} goal(s). Changes may not be saved.`);
   }
 };
 
@@ -222,10 +248,18 @@ const saveGoal = async (goalData: {
       }
     }
     
-    await supabase.from('goals').update(payload).eq('id', goalData.id);
+    const { error } = await supabase.from('goals').update(payload).eq('id', goalData.id);
+    if (error) {
+      showError('Failed to update goal. Please try again.');
+      await fetchGoals();
+    }
   } else {
     // Insert
-    const { data } = await supabase.from('goals').insert(payload).select().single();
+    const { data, error } = await supabase.from('goals').insert(payload).select().single();
+    if (error) {
+      showError('Failed to create goal. Please try again.');
+      return;
+    }
     if (data) {
       goals.value.unshift({
         id: data.id,
@@ -248,7 +282,10 @@ const deleteGoal = async (id: string) => {
   const previousGoals = [...goals.value];
   goals.value = goals.value.filter(g => g.id !== id);
   const { error } = await supabase.from('goals').delete().eq('id', id);
-  if (error) goals.value = previousGoals;
+  if (error) {
+    goals.value = previousGoals;
+    showError('Failed to delete goal. Please try again.');
+  }
 };
 </script>
 
@@ -321,7 +358,7 @@ const deleteGoal = async (id: string) => {
                <GoalColumn
                   title="Monthly Focus"
                   period="monthly"
-                  :goals="getFilteredGoals('monthly')"
+                  :goals="monthlyGoals"
                   variant="highlight"
                   @update:goals="updateGoals({ period: 'monthly' }, $event)"
                   @delete-goal="deleteGoal"
@@ -336,7 +373,7 @@ const deleteGoal = async (id: string) => {
                     :title="`Week ${week}`"
                     period="weekly"
                     variant="compact"
-                    :goals="getFilteredGoals('weekly', week)"
+                    :goals="getWeekGoals(week)"
                     @update:goals="updateGoals({ period: 'weekly', weekNumber: week }, $event)"
                     @delete-goal="deleteGoal"
                     @edit-goal="openEditModal"
@@ -354,7 +391,7 @@ const deleteGoal = async (id: string) => {
              <GoalColumn
                 title="Yearly Goals"
                 period="yearly"
-                :goals="getFilteredGoals('yearly')"
+                :goals="yearlyGoals"
                 @update:goals="updateGoals({ period: 'yearly' }, $event)"
                 @delete-goal="deleteGoal"
                 @edit-goal="openEditModal"
@@ -374,5 +411,19 @@ const deleteGoal = async (id: string) => {
     </div>
 
     <AuthScreen v-else />
+
+    <!-- Toast Notifications -->
+    <div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-2">
+      <div
+        v-for="toast in toasts"
+        :key="toast.id"
+        class="flex items-center gap-3 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-in slide-in-from-right fade-in duration-300"
+      >
+        <span class="flex-1">{{ toast.message }}</span>
+        <button @click="dismissToast(toast.id)" class="text-white/70 hover:text-white transition-colors shrink-0">
+          <X :size="16" />
+        </button>
+      </div>
+    </div>
   </div>
 </template>
