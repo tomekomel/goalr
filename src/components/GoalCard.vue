@@ -23,38 +23,39 @@ const formatStatus = (s: string) => s.split('-').join(' ');
 </script>
 
 <template>
-  <div class="bg-white p-5 rounded-lg card-shadow border border-slate-100 group relative hover:border-slate-200 transition-colors flex flex-col">
-    <!-- Header: Title & Meta -->
-    <div class="flex justify-between items-start mb-3 gap-3">
-      <h3 class="font-bold text-slate-800 leading-tight text-lg mt-0.5">{{ goal.title }}</h3>
+  <div class="bg-white p-5 rounded-lg card-shadow border border-slate-100 group relative hover:border-slate-200 transition-colors flex flex-col h-full">
+    <!-- Header: Title -->
+    <div class="mb-1.5">
+      <h3 class="font-bold text-slate-800 leading-tight text-lg">{{ goal.title }}</h3>
+    </div>
 
-      <div class="flex items-center gap-2 shrink-0">
-        <!-- Actions (Visible on Hover) -->
-        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity mr-1">
-          <button
-            @click="$emit('edit', goal)"
-            class="text-slate-300 hover:text-primary transition-colors p-1"
-            title="Edit Goal"
-          >
-            <Pencil :size="14" />
-          </button>
-          <button
-            @click="$emit('delete', goal.id)"
-            class="text-slate-300 hover:text-red-400 transition-colors p-1"
-            title="Delete Goal"
-          >
-            <Trash2 :size="14" />
-          </button>
-        </div>
+    <!-- Meta: Status & Actions -->
+    <div class="flex items-center justify-between mb-3">
+      <!-- Status Badge -->
+      <div 
+        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-transparent"
+        :class="[statusConfig[goal.status].bg, statusConfig[goal.status].color]"
+      >
+        <component :is="statusConfig[goal.status].icon" :size="12" stroke-width="3" />
+        <span class="text-[10px] font-bold uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
+      </div>
 
-        <!-- Status Badge -->
-        <div 
-          class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-transparent"
-          :class="[statusConfig[goal.status].bg, statusConfig[goal.status].color]"
+      <!-- Actions (Visible on Hover) -->
+      <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          @click="$emit('edit', goal)"
+          class="text-slate-300 hover:text-primary transition-colors p-1"
+          title="Edit Goal"
         >
-          <component :is="statusConfig[goal.status].icon" :size="12" stroke-width="3" />
-          <span class="text-[10px] font-bold uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
-        </div>
+          <Pencil :size="14" />
+        </button>
+        <button
+          @click="$emit('delete', goal.id)"
+          class="text-slate-300 hover:text-red-400 transition-colors p-1"
+          title="Delete Goal"
+        >
+          <Trash2 :size="14" />
+        </button>
       </div>
     </div>
 
@@ -65,7 +66,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <div class="flex items-center gap-2 pt-3 border-t border-slate-50 mt-auto">
       <div class="h-1.5 w-1.5 rounded-full bg-slate-200"></div>
       <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">
-        {{ new Date(goal.createdAt).toLocaleDateString() }}
+        {{ new Date(goal.createdAt).toLocaleDateString('en-GB') }}
       </span>
     </div>
 

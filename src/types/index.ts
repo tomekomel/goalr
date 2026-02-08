@@ -9,4 +9,6 @@ export interface Goal {
   status: GoalStatus;
   progress: number; // 0-100
   createdAt: number;
+  weekNumber?: number; // 1-4, optional for monthly/yearly
+  targetDate?: string; // YYYY-MM-DD
 }

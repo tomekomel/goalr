@@ -49,3 +49,13 @@ USING (auth.uid() = user_id);
 -- Add progress column (0-100)
 ALTER TABLE goals 
 ADD COLUMN progress smallint DEFAULT 0 CHECK (progress >= 0 AND progress <= 100);
+
+-- --- DATE MANAGEMENT ---
+
+-- Add target_date to track which month/year the goal belongs to
+ALTER TABLE goals
+ADD COLUMN target_date date DEFAULT CURRENT_DATE;
+
+-- Add week_number to track specific week (1-4) for weekly goals
+ALTER TABLE goals
+ADD COLUMN week_number smallint CHECK (week_number >= 1 AND week_number <= 4);

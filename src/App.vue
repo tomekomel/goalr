@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive } from 'lucide-vue-next';
 import { supabase } from './supabase';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
@@ -21,6 +21,18 @@ const views = [
 ];
 
 const goals = ref<Goal[]>([]);
+const currentDate = ref(new Date());
+
+const currentMonthName = computed(() => currentDate.value.toLocaleString('default', { month: 'long' }));
+const currentYear = computed(() => currentDate.value.getFullYear());
+
+// Helper to format date as YYYY-MM-DD in LOCAL time
+const formatDateLocal = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 const fetchGoals = async () => {
   if (!session.value) return;
@@ -36,6 +48,9 @@ const fetchGoals = async () => {
   }
 
   if (data) {
+    const now = new Date();
+    const currentWeek = Math.min(Math.ceil(now.getDate() / 7), 4);
+
     goals.value = data.map((g: any) => ({
       id: g.id,
       title: g.title,
@@ -43,7 +58,9 @@ const fetchGoals = async () => {
       period: g.period as GoalPeriod,
       status: (g.status || 'planned') as GoalStatus,
       progress: g.progress || 0,
-      createdAt: new Date(g.created_at).getTime()
+      createdAt: new Date(g.created_at).getTime(),
+      weekNumber: g.week_number || (g.period === 'weekly' ? currentWeek : undefined), // Default to current week if missing
+      targetDate: g.target_date
     }));
   }
 };
@@ -65,42 +82,93 @@ const handleSignOut = async () => {
   await supabase.auth.signOut();
 };
 
-const getGoalsByPeriod = (period: GoalPeriod) => {
-  const allPeriodGoals = goals.value.filter(g => g.period === period);
-  
+const getFilteredGoals = (period: GoalPeriod, weekNumber?: number) => {
+  let filtered = goals.value.filter(g => g.period === period);
+
+  // Filter by Status based on View
   if (currentView.value === 'dashboard') {
-    return allPeriodGoals.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
+    filtered = filtered.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
   } else if (currentView.value === 'backlog') {
-    return allPeriodGoals.filter(g => g.status === 'planned');
+    filtered = filtered.filter(g => g.status === 'planned');
   } else if (currentView.value === 'archive') {
-    return allPeriodGoals.filter(g => g.status === 'archived');
+    filtered = filtered.filter(g => g.status === 'archived');
   }
-  
-  return [];
+
+  // Filter by Date Context
+  const now = new Date();
+  const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const currentYearStr = `${now.getFullYear()}`;
+
+  if (period === 'monthly' || period === 'weekly') {
+     filtered = filtered.filter(g => {
+        if (!g.targetDate) return true; // Legacy goals show up
+        return g.targetDate.startsWith(currentMonthStr);
+     });
+  } else if (period === 'yearly') {
+     filtered = filtered.filter(g => {
+        if (!g.targetDate) return true;
+        return g.targetDate.startsWith(currentYearStr);
+     });
+  }
+
+  // Filter by Week Number
+  if (period === 'weekly' && weekNumber !== undefined) {
+    filtered = filtered.filter(g => g.weekNumber === weekNumber);
+  }
+
+  return filtered;
 };
 
-const updateGoalsForPeriod = async (period: GoalPeriod, newGoals: Goal[]) => {
-  // Identify goals that actually changed period
-  const goalsToUpdate = newGoals.filter(g => g.period !== period);
+const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
+  // Find goals that don't match the new context
+  const goalsToUpdate = newGoals.filter(g => {
+    if (g.period !== context.period) return true;
+    if (context.period === 'weekly' && g.weekNumber !== context.weekNumber) return true;
+    return false;
+  });
 
-  // Optimistic Update
-  const otherGoals = goals.value.filter(g => g.period !== period);
-  const updatedPeriodGoals = newGoals.map(g => ({ ...g, period }));
-  goals.value = [...otherGoals, ...updatedPeriodGoals];
+  if (goalsToUpdate.length === 0) return;
 
-  // Persist changes to Supabase
-  for (const goal of goalsToUpdate) {
+  // Calculate targetDate for the context (1st of current month, LOCAL time)
+  const now = new Date();
+  const targetDateObj = new Date(now.getFullYear(), now.getMonth(), 1);
+  const targetDate = formatDateLocal(targetDateObj);
+
+  const updatedGoals = goalsToUpdate.map(g => ({
+    ...g,
+    period: context.period,
+    weekNumber: context.weekNumber, // specific week or undefined
+    targetDate: targetDate,
+    updated_at: new Date().toISOString() // for local view
+  }));
+
+  // Update local state
+  goals.value = goals.value.map(g => {
+    const updated = updatedGoals.find(u => u.id === g.id);
+    return updated || g;
+  });
+
+  // Persist to Supabase
+  for (const goal of updatedGoals) {
+    const payload: any = {
+      period: context.period,
+      target_date: targetDate,
+      updated_at: new Date().toISOString()
+    };
+    
+    if (context.weekNumber !== undefined) {
+        payload.week_number = context.weekNumber;
+    } else {
+        payload.week_number = null;
+    }
+
     const { error } = await supabase
       .from('goals')
-      .update({
-        period,
-        updated_at: new Date().toISOString()
-      })
+      .update(payload)
       .eq('id', goal.id);
 
     if (error) {
-      console.error(`Failed to update period for goal ${goal.id}:`, error);
-      // Ideally rollback here, but for now we log error
+      console.error(`Failed to update goal ${goal.id}:`, error);
     }
   }
 };
@@ -115,60 +183,63 @@ const openEditModal = (goal: Goal) => {
   isModalOpen.value = true;
 };
 
-const saveGoal = async (goalData: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus; progress: number }) => {
+const saveGoal = async (goalData: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus; progress: number; weekNumber?: number }) => {
   if (!session.value) return;
 
-  const payload = {
+  const now = new Date();
+  // Set targetDate to 1st of current month (LOCAL time)
+  const targetDateObj = new Date(now.getFullYear(), now.getMonth(), 1);
+  const targetDate = formatDateLocal(targetDateObj);
+  
+  const currentWeek = Math.min(Math.ceil(now.getDate() / 7), 4);
+
+  const payload: any = {
     title: goalData.title,
     description: goalData.description,
     period: goalData.period,
     status: goalData.status,
     progress: goalData.progress,
     updated_at: new Date().toISOString(),
-    user_id: session.value.user.id
+    user_id: session.value.user.id,
+    target_date: targetDate,
   };
 
+  // Assign default week number for NEW weekly goals if not provided
+  if (!goalData.id && goalData.period === 'weekly') {
+      payload.week_number = currentWeek;
+  }
+
   if (goalData.id) {
-    // Optimistic Update
+    // Update
     const index = goals.value.findIndex(g => g.id === goalData.id);
     if (index !== -1) {
-      goals.value[index] = {
-        ...goals.value[index],
-        ...goalData,
-        id: goalData.id
-      } as Goal;
+      const existingGoal = goals.value[index];
+      if (existingGoal) {
+        goals.value[index] = { 
+            ...existingGoal, 
+            ...goalData,
+            id: goalData.id!,
+            createdAt: existingGoal.createdAt
+        };
+      }
     }
-
-    const { error } = await supabase
-      .from('goals')
-      .update(payload)
-      .eq('id', goalData.id);
-
-    if (error) {
-      console.error('Error updating goal:', error);
-      await fetchGoals(); // Revert/Refresh on error
-    }
+    
+    await supabase.from('goals').update(payload).eq('id', goalData.id);
   } else {
-    // Insert new
-    const { data, error } = await supabase
-      .from('goals')
-      .insert(payload)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating goal:', error);
-    } else if (data) {
-      const newGoal: Goal = {
+    // Insert
+    const { data } = await supabase.from('goals').insert(payload).select().single();
+    if (data) {
+      goals.value.unshift({
         id: data.id,
         title: data.title,
         description: data.description,
-        period: data.period as GoalPeriod,
-        status: data.status as GoalStatus,
-        progress: data.progress ?? 0,
+        period: data.period,
+        status: data.status,
+        progress: data.progress,
         createdAt: new Date(data.created_at).getTime(),
-      };
-      goals.value.unshift(newGoal); // Add to top
+        weekNumber: data.week_number,
+        targetDate: data.target_date
+      });
     }
   }
   isModalOpen.value = false;
@@ -176,25 +247,15 @@ const saveGoal = async (goalData: { id?: string; title: string; description: str
 };
 
 const deleteGoal = async (id: string) => {
-  // Optimistic Delete
   const previousGoals = [...goals.value];
   goals.value = goals.value.filter(g => g.id !== id);
-
-  const { error } = await supabase
-    .from('goals')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    console.error('Error deleting goal:', error);
-    goals.value = previousGoals; // Revert
-  }
+  const { error } = await supabase.from('goals').delete().eq('id', id);
+  if (error) goals.value = previousGoals;
 };
 </script>
 
 <template>
   <div class="min-h-screen bg-slate-50">
-    <!-- Authenticated App -->
     <div v-if="session" class="pb-20">
       <!-- Header -->
       <header class="max-w-7xl mx-auto px-6 pt-12 pb-8">
@@ -229,16 +290,16 @@ const deleteGoal = async (id: string) => {
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="flex items-center gap-2 border-b border-slate-200 pb-1">
+        <div class="flex items-center gap-2 pb-1">
           <button
             v-for="view in views"
             :key="view.id"
             @click="currentView = view.id as ViewType"
-            class="flex items-center gap-2 px-4 py-3 rounded-t-xl text-sm font-bold transition-all border-b-2"
+            class="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all"
             :class="[
               currentView === view.id 
-                ? 'text-emerald-600 border-emerald-600 bg-emerald-50/50' 
-                : 'text-slate-500 border-transparent hover:text-slate-700 hover:bg-slate-100/50'
+                ? 'text-emerald-600 bg-emerald-50/50' 
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
             ]"
           >
             <component :is="view.icon" :size="16" />
@@ -249,35 +310,62 @@ const deleteGoal = async (id: string) => {
 
       <!-- Board -->
       <main class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <GoalColumn
-            title="Weekly"
-            period="weekly"
-            :goals="getGoalsByPeriod('weekly')"
-            @update:goals="updateGoalsForPeriod('weekly', $event)"
-            @delete-goal="deleteGoal"
-            @edit-goal="openEditModal"
-          />
-          <GoalColumn
-            title="Monthly"
-            period="monthly"
-            :goals="getGoalsByPeriod('monthly')"
-            @update:goals="updateGoalsForPeriod('monthly', $event)"
-            @delete-goal="deleteGoal"
-            @edit-goal="openEditModal"
-          />
-          <GoalColumn
-            title="Yearly"
-            period="yearly"
-            :goals="getGoalsByPeriod('yearly')"
-            @update:goals="updateGoalsForPeriod('yearly', $event)"
-            @delete-goal="deleteGoal"
-            @edit-goal="openEditModal"
-          />
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+          
+          <!-- LEFT COLUMN: Current Month (3/4 width) -->
+          <div class="xl:col-span-3 space-y-4">
+             <div class="flex items-center gap-3 mb-2">
+                <h2 class="text-2xl font-bold text-slate-800">Current Month: <span class="text-emerald-600">{{ currentMonthName }}</span></h2>
+             </div>
+
+             <div class="bg-slate-100/50 rounded-xl p-6 border border-slate-200/50 flex flex-col gap-8">
+               <!-- Row 1: Monthly Goals -->
+               <GoalColumn
+                  title="Monthly Focus"
+                  period="monthly"
+                  :goals="getFilteredGoals('monthly')"
+                  variant="highlight"
+                  @update:goals="updateGoals({ period: 'monthly' }, $event)"
+                  @delete-goal="deleteGoal"
+                  @edit-goal="openEditModal"
+               />
+
+               <!-- Rows 2-5: Weekly Goals -->
+               <div class="flex flex-col gap-4">
+                  <GoalColumn
+                    v-for="week in 4"
+                    :key="week"
+                    :title="`Week ${week}`"
+                    period="weekly"
+                    variant="compact"
+                    :goals="getFilteredGoals('weekly', week)"
+                    @update:goals="updateGoals({ period: 'weekly', weekNumber: week }, $event)"
+                    @delete-goal="deleteGoal"
+                    @edit-goal="openEditModal"
+                  />
+               </div>
+             </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Current Year (1/4 width) -->
+          <div class="xl:col-span-1 space-y-6">
+              <div class="flex items-center gap-3 mb-2">
+                <h2 class="text-2xl font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
+             </div>
+             
+             <GoalColumn
+                title="Yearly Goals"
+                period="yearly"
+                :goals="getFilteredGoals('yearly')"
+                @update:goals="updateGoals({ period: 'yearly' }, $event)"
+                @delete-goal="deleteGoal"
+                @edit-goal="openEditModal"
+             />
+          </div>
+
         </div>
       </main>
 
-      <!-- Modal -->
       <GoalModal
         v-if="isModalOpen"
         :is-open="isModalOpen"
@@ -287,7 +375,6 @@ const deleteGoal = async (id: string) => {
       />
     </div>
 
-    <!-- Login Screen -->
     <AuthScreen v-else />
   </div>
 </template>
