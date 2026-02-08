@@ -183,15 +183,17 @@ const openEditModal = (goal: Goal) => {
   isModalOpen.value = true;
 };
 
-const saveGoal = async (goalData: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus; progress: number; weekNumber?: number }) => {
+const saveGoal = async (goalData: { 
+  id?: string; 
+  title: string; 
+  description: string; 
+  period: GoalPeriod; 
+  status: GoalStatus; 
+  progress: number; 
+  weekNumber?: number;
+  targetDate?: string;
+}) => {
   if (!session.value) return;
-
-  const now = new Date();
-  // Set targetDate to 1st of current month (LOCAL time)
-  const targetDateObj = new Date(now.getFullYear(), now.getMonth(), 1);
-  const targetDate = formatDateLocal(targetDateObj);
-  
-  const currentWeek = Math.min(Math.ceil(now.getDate() / 7), 4);
 
   const payload: any = {
     title: goalData.title,
@@ -201,13 +203,9 @@ const saveGoal = async (goalData: { id?: string; title: string; description: str
     progress: goalData.progress,
     updated_at: new Date().toISOString(),
     user_id: session.value.user.id,
-    target_date: targetDate,
+    target_date: goalData.targetDate,
+    week_number: goalData.period === 'weekly' ? goalData.weekNumber : null
   };
-
-  // Assign default week number for NEW weekly goals if not provided
-  if (!goalData.id && goalData.period === 'weekly') {
-      payload.week_number = currentWeek;
-  }
 
   if (goalData.id) {
     // Update

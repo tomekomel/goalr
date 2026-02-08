@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import draggable from 'vuedraggable';
+import { Target } from 'lucide-vue-next';
 import type { Goal, GoalPeriod } from '../types';
 import GoalCard from './GoalCard.vue';
 
@@ -54,7 +55,7 @@ const headerClasses = {
   >
     <div class="flex items-center justify-between mb-4 px-2">
       <h2 class="font-bold flex items-center gap-2" :class="headerClasses[variant]">
-        <span v-if="variant === 'highlight'" class="text-lg">🎯</span>
+        <Target v-if="variant === 'highlight'" :size="20" class="text-emerald-600" />
         {{ title }}
       </h2>
       <span class="bg-white px-2.5 py-0.5 rounded-full text-xs font-semibold text-slate-400 border border-slate-200 shadow-sm">

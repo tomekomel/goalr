@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import { X } from 'lucide-vue-next';
 import type { Goal, GoalPeriod, GoalStatus } from '../types';
 
@@ -10,8 +10,24 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'save', goal: { id?: string; title: string; description: string; period: GoalPeriod; status: GoalStatus; progress: number }): void;
+  (e: 'save', goal: { 
+    id?: string; 
+    title: string; 
+    description: string; 
+    period: GoalPeriod; 
+    status: GoalStatus; 
+    progress: number;
+    weekNumber?: number;
+    targetDate?: string;
+  }): void;
 }>();
+
+const getDefaultTargetDate = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}-01`;
+};
 
 const form = reactive({
   title: props.goal?.title ?? '',
@@ -19,14 +35,69 @@ const form = reactive({
   period: props.goal?.period ?? 'weekly',
   status: props.goal?.status ?? 'planned',
   progress: props.goal?.progress ?? 0,
+  weekNumber: props.goal?.weekNumber ?? (new Date().getDate() <= 7 ? 1 : new Date().getDate() <= 14 ? 2 : new Date().getDate() <= 21 ? 3 : 4),
+  targetDate: props.goal?.targetDate ?? getDefaultTargetDate(),
 });
+
+// Reset weekNumber if switching away from weekly
+watch(() => form.period, (newPeriod) => {
+  if (newPeriod === 'weekly' && !form.weekNumber) {
+    form.weekNumber = 1;
+  }
+});
+
+const monthValue = computed({
+  get: () => form.targetDate.substring(0, 7), // YYYY-MM
+  set: (val: string) => {
+    form.targetDate = `${val}-01`;
+  }
+});
+
+const yearValue = computed({
+  get: () => parseInt(form.targetDate.substring(0, 4)),
+  set: (val: number) => {
+    const month = form.targetDate.substring(5, 7) || '01';
+    form.targetDate = `${val}-${month}-01`;
+  }
+});
+
+const months = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+
+const currentMonthIndex = computed(() => parseInt(form.targetDate.substring(5, 7)) - 1);
+
+const selectMonth = (index: number) => {
+  const year = form.targetDate.substring(0, 4);
+  const month = String(index + 1).padStart(2, '0');
+  form.targetDate = `${year}-${month}-01`;
+};
+
+const changeYear = (delta: number) => {
+  const year = parseInt(form.targetDate.substring(0, 4)) + delta;
+  const month = form.targetDate.substring(5, 7);
+  form.targetDate = `${year}-${month}-01`;
+};
 
 const handleSubmit = () => {
   if (!form.title.trim()) return;
-  emit('save', {
+  
+  const payload: any = {
     id: props.goal?.id,
-    ...form
-  });
+    title: form.title,
+    description: form.description,
+    period: form.period,
+    status: form.status,
+    progress: form.progress,
+    targetDate: form.targetDate,
+  };
+
+  if (form.period === 'weekly') {
+    payload.weekNumber = form.weekNumber;
+  }
+
+  emit('save', payload);
   emit('close');
 };
 
@@ -161,6 +232,66 @@ const setStatus = (s: GoalStatus) => {
               >
                 {{ formatStatus(s) }}
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Date Context (Week / Month / Year) -->
+        <div class="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
+          <div v-if="form.period === 'weekly'">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Week Number</label>
+            <div class="grid grid-cols-4 gap-2">
+              <button
+                v-for="w in 4"
+                :key="w"
+                type="button"
+                @click="form.weekNumber = w"
+                :class="[
+                  'py-2 rounded-lg text-xs font-bold transition-all border cursor-pointer',
+                  form.weekNumber === w
+                    ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
+                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                ]"
+              >
+                Week {{ w }}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2">
+              {{ form.period === 'yearly' ? 'Select Year' : 'Select Month & Year' }}
+            </label>
+            
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+              <!-- Year Selector -->
+              <div class="flex items-center justify-between mb-4 px-2">
+                <button type="button" @click="changeYear(-1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                <span class="font-bold text-slate-700 text-lg">{{ form.targetDate.substring(0, 4) }}</span>
+                <button type="button" @click="changeYear(1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+
+              <!-- Month Grid -->
+              <div v-if="form.period !== 'yearly'" class="grid grid-cols-4 gap-2">
+                <button
+                  v-for="(month, index) in months"
+                  :key="month"
+                  type="button"
+                  @click="selectMonth(index)"
+                  :class="[
+                    'py-2 rounded-lg text-[11px] font-bold uppercase tracking-tighter transition-all border cursor-pointer',
+                    currentMonthIndex === index
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                      : 'bg-white text-slate-400 border-slate-100 hover:border-slate-200 hover:text-slate-600'
+                  ]"
+                >
+                  {{ month }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
