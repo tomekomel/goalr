@@ -51,7 +51,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
 <template>
   <div class="bg-white p-5 rounded-lg card-shadow border border-slate-100 group relative hover:border-slate-200 transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
     <!-- Header: Title + Drag Handle -->
-    <div class="flex items-center gap-1.5 mb-1.5">
+    <div class="flex items-center gap-1.5 mb-3">
       <h3 class="font-bold text-slate-800 leading-tight text-lg">{{ goal.title }}</h3>
       <GripVertical :size="16" class="text-slate-300 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
@@ -60,12 +60,12 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <div class="flex items-center justify-between mb-3">
       <!-- Status Badge -->
       <div
-        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-transparent"
+        class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-transparent"
         :class="[statusConfig[goal.status].bg, statusConfig[goal.status].color]"
       >
-        <component :is="statusConfig[goal.status].icon" :size="12" stroke-width="3" />
-        <span class="text-xs font-medium uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
-        <span v-if="goal.status === 'in-progress'" class="text-xs font-medium">&middot; {{ goal.progress }}%</span>
+        <component :is="statusConfig[goal.status].icon" :size="10" stroke-width="3" />
+        <span class="text-[10px] font-medium uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
+        <span v-if="goal.status === 'in-progress'" class="text-[10px] font-medium">&middot; {{ goal.progress }}%</span>
       </div>
 
       <!-- Actions (Visible on Hover) -->

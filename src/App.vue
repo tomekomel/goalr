@@ -450,7 +450,7 @@ const deleteGoal = async (id: string) => {
 
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
           <div class="xl:col-span-3 space-y-4">
-             <div class="flex items-center gap-3 mb-2">
+             <div class="flex items-center gap-3 mb-5">
                 <button @click="navigateMonth(-1)" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
                   <ChevronLeft :size="20" />
                 </button>
@@ -502,7 +502,7 @@ const deleteGoal = async (id: string) => {
 
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
           <div class="xl:col-span-1 space-y-6">
-              <div class="flex items-center gap-3 mb-2">
+              <div class="flex items-center gap-3 mb-5">
                 <h2 class="text-2xl font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
               </div>
 
