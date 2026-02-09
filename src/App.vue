@@ -353,20 +353,21 @@ const deleteGoal = async (id: string) => {
                 <h2 class="text-2xl font-bold text-slate-800">Current Month: <span class="text-emerald-600">{{ currentMonthName }}</span></h2>
              </div>
 
-             <div class="bg-slate-100/50 rounded-xl p-6 border border-slate-200/50 flex flex-col gap-8">
+             <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-6">
                <!-- Row 1: Monthly Goals -->
                <GoalColumn
                   title="Monthly Focus"
                   period="monthly"
                   :goals="monthlyGoals"
                   variant="highlight"
+                  class="px-6 pt-6"
                   @update:goals="updateGoals({ period: 'monthly' }, $event)"
                   @delete-goal="deleteGoal"
                   @edit-goal="openEditModal"
                />
 
                <!-- Rows 2-5: Weekly Goals -->
-               <div class="flex flex-col gap-4">
+               <div class="flex flex-col gap-4 px-6 pb-6">
                   <GoalColumn
                     v-for="week in 4"
                     :key="week"

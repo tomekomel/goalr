@@ -33,9 +33,9 @@ const onDragChange = () => {
 };
 
 const containerClasses = {
-  'default': 'bg-slate-100/50 border-slate-200/50',
-  'highlight': 'bg-transparent border-transparent', // Clean style for Monthly
-  'compact': 'bg-white border-slate-100', // Cleaner style for Weekly rows
+  'default': 'bg-slate-100/50 border-slate-200/50 p-4',
+  'highlight': 'bg-transparent border-transparent py-4 px-0', // Clean style for Monthly
+  'compact': 'bg-white border-slate-100 p-4', // Cleaner style for Weekly rows
 };
 
 const headerClasses = {
@@ -53,7 +53,7 @@ const gridClasses = {
 
 <template>
   <div 
-    class="flex flex-col w-full rounded-xl p-4 border transition-colors duration-300"
+    class="flex flex-col w-full rounded-xl border transition-colors duration-300"
     :class="[
       containerClasses[variant], 
       variant === 'default' ? 'h-full min-h-[500px]' : 'h-auto min-h-[150px]'
