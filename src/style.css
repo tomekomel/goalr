@@ -37,6 +37,7 @@
   opacity: 0.5;
   background: #f1f5f9;
   border: 2px dashed #cbd5e1;
+  cursor: grabbing;
 }
 
 /* Custom Slider Thumb */

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive, X } from 'lucide-vue-next';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive, X, ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
@@ -38,10 +38,28 @@ const views = [
 ];
 
 const goals = ref<Goal[]>([]);
+const isLoading = ref(true);
 const currentDate = ref(new Date());
 
 const currentMonthName = computed(() => currentDate.value.toLocaleString('default', { month: 'long' }));
 const currentYear = computed(() => currentDate.value.getFullYear());
+
+const isCurrentMonth = computed(() => {
+  const now = new Date();
+  return currentDate.value.getMonth() === now.getMonth() && currentDate.value.getFullYear() === now.getFullYear();
+});
+
+const navigateMonth = (delta: number) => {
+  const d = new Date(currentDate.value);
+  d.setMonth(d.getMonth() + delta);
+  currentDate.value = d;
+};
+
+const goToToday = () => {
+  currentDate.value = new Date();
+};
+
+const currentWeekNumber = computed(() => Math.min(Math.ceil(new Date().getDate() / 7), 4));
 
 // Helper to format date as YYYY-MM-DD in LOCAL time
 const formatDateLocal = (date: Date) => {
@@ -54,6 +72,7 @@ const formatDateLocal = (date: Date) => {
 const fetchGoals = async () => {
   if (!session.value) return;
 
+  isLoading.value = true;
   const { data, error } = await supabase
     .from('goals')
     .select('*')
@@ -61,6 +80,7 @@ const fetchGoals = async () => {
 
   if (error) {
     showError('Failed to load goals. Please try refreshing the page.');
+    isLoading.value = false;
     return;
   }
 
@@ -76,10 +96,11 @@ const fetchGoals = async () => {
       status: (g.status || 'planned') as GoalStatus,
       progress: g.progress || 0,
       createdAt: new Date(g.created_at).getTime(),
-      weekNumber: g.week_number || (g.period === 'weekly' ? currentWeek : undefined), // Default to current week if missing
+      weekNumber: g.week_number || (g.period === 'weekly' ? currentWeek : undefined),
       targetDate: g.target_date
     }));
   }
+  isLoading.value = false;
 };
 
 let authSubscription: { unsubscribe: () => void } | null = null;
@@ -148,6 +169,13 @@ const getWeekGoals = (weekNumber: number) =>
 const yearlyGoals = computed(() => {
   const byPeriod = goals.value.filter(g => g.period === 'yearly');
   return filterByDate(filterByView(byPeriod), 'yearly');
+});
+
+const emptyMessages = computed(() => {
+  const view = currentView.value;
+  if (view === 'backlog') return { monthly: 'Backlog is empty. Great job planning!', weekly: 'Backlog is empty. Great job planning!', yearly: 'Backlog is empty. Great job planning!' };
+  if (view === 'archive') return { monthly: 'No archived goals yet.', weekly: 'No archived goals yet.', yearly: 'No archived goals yet.' };
+  return { monthly: 'No monthly goals. Add one or move from Backlog.', weekly: 'No goals this week.', yearly: 'No yearly goals yet.' };
 });
 
 const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
@@ -293,8 +321,8 @@ const deleteGoal = async (id: string) => {
   <div class="min-h-screen bg-slate-50">
     <div v-if="session" class="pb-20">
       <!-- Header -->
-      <header class="max-w-7xl mx-auto px-6 pt-12 pb-8">
-        <div class="flex justify-between items-end mb-8">
+      <header class="max-w-7xl mx-auto px-6 pt-8 sm:pt-12 pb-8">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-8">
           <div>
             <div class="flex items-center gap-3 mb-2">
               <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
@@ -308,15 +336,15 @@ const deleteGoal = async (id: string) => {
           <div class="flex items-center gap-4">
              <button
               @click="handleSignOut"
-              class="bg-white hover:bg-slate-50 text-slate-500 px-4 py-3.5 rounded-2xl font-bold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2"
-              title="Sign Out"
+              class="bg-white hover:bg-slate-50 text-slate-500 px-4 py-3.5 rounded-2xl font-bold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+              aria-label="Sign out"
             >
               <LogOut :size="20" />
             </button>
-            
+
             <button
               @click="openAddModal"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-emerald-200 flex items-center gap-2 cursor-pointer"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-emerald-200 flex items-center gap-2 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Plus :size="20" />
               Add Goal
@@ -325,15 +353,15 @@ const deleteGoal = async (id: string) => {
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="flex items-center gap-2 pb-1">
+        <div class="flex items-center gap-2 pb-1 overflow-x-auto">
           <button
             v-for="view in views"
             :key="view.id"
             @click="currentView = view.id as ViewType"
-            class="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all"
+            class="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary"
             :class="[
-              currentView === view.id 
-                ? 'text-emerald-600 bg-emerald-50/50' 
+              currentView === view.id
+                ? 'text-emerald-600 bg-emerald-50/50'
                 : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
             ]"
           >
@@ -343,14 +371,63 @@ const deleteGoal = async (id: string) => {
         </div>
       </header>
 
+      <!-- Loading Skeleton -->
+      <main v-if="isLoading" class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+          <div class="xl:col-span-3 space-y-4">
+            <div class="h-8 w-48 bg-slate-200 rounded-lg animate-pulse mb-4"></div>
+            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-6 space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div v-for="i in 3" :key="i" class="bg-white rounded-lg p-5 space-y-3">
+                  <div class="h-5 bg-slate-200 rounded animate-pulse w-3/4"></div>
+                  <div class="h-3 bg-slate-100 rounded animate-pulse w-1/2"></div>
+                  <div class="h-10 bg-slate-100 rounded animate-pulse"></div>
+                </div>
+              </div>
+              <div v-for="w in 2" :key="w" class="bg-white rounded-xl p-4">
+                <div class="h-4 bg-slate-200 rounded animate-pulse w-20 mb-3"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div v-for="j in 2" :key="j" class="bg-slate-50 rounded-lg p-5 space-y-3">
+                    <div class="h-5 bg-slate-200 rounded animate-pulse w-2/3"></div>
+                    <div class="h-3 bg-slate-100 rounded animate-pulse w-1/3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="xl:col-span-1">
+            <div class="h-8 w-32 bg-slate-200 rounded-lg animate-pulse mb-6"></div>
+            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-4 space-y-3">
+              <div v-for="i in 2" :key="i" class="bg-white rounded-lg p-5 space-y-3">
+                <div class="h-5 bg-slate-200 rounded animate-pulse w-3/4"></div>
+                <div class="h-3 bg-slate-100 rounded animate-pulse w-1/2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
       <!-- Board -->
-      <main class="max-w-7xl mx-auto px-6">
+      <main v-else class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
           
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
           <div class="xl:col-span-3 space-y-4">
              <div class="flex items-center gap-3 mb-2">
-                <h2 class="text-2xl font-bold text-slate-800">Current Month: <span class="text-emerald-600">{{ currentMonthName }}</span></h2>
+                <button @click="navigateMonth(-1)" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
+                  <ChevronLeft :size="20" />
+                </button>
+                <h2 class="text-2xl font-bold text-slate-800">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
+                <button @click="navigateMonth(1)" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Next month">
+                  <ChevronRight :size="20" />
+                </button>
+                <button
+                  v-if="!isCurrentMonth"
+                  @click="goToToday"
+                  class="ml-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
+                >
+                  Today
+                </button>
              </div>
 
              <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-6">
@@ -360,6 +437,7 @@ const deleteGoal = async (id: string) => {
                   period="monthly"
                   :goals="monthlyGoals"
                   variant="highlight"
+                  :empty-message="emptyMessages.monthly"
                   class="px-6 pt-6"
                   @update:goals="updateGoals({ period: 'monthly' }, $event)"
                   @delete-goal="deleteGoal"
@@ -375,6 +453,8 @@ const deleteGoal = async (id: string) => {
                     period="weekly"
                     variant="compact"
                     :goals="getWeekGoals(week)"
+                    :empty-message="emptyMessages.weekly"
+                    :is-current-week="isCurrentMonth && week === currentWeekNumber"
                     @update:goals="updateGoals({ period: 'weekly', weekNumber: week }, $event)"
                     @delete-goal="deleteGoal"
                     @edit-goal="openEditModal"
@@ -387,12 +467,13 @@ const deleteGoal = async (id: string) => {
           <div class="xl:col-span-1 space-y-6">
               <div class="flex items-center gap-3 mb-2">
                 <h2 class="text-2xl font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
-             </div>
+              </div>
              
              <GoalColumn
                 title="Yearly Goals"
                 period="yearly"
                 :goals="yearlyGoals"
+                :empty-message="emptyMessages.yearly"
                 @update:goals="updateGoals({ period: 'yearly' }, $event)"
                 @delete-goal="deleteGoal"
                 @edit-goal="openEditModal"
@@ -421,7 +502,7 @@ const deleteGoal = async (id: string) => {
         class="flex items-center gap-3 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-in slide-in-from-right fade-in duration-300"
       >
         <span class="flex-1">{{ toast.message }}</span>
-        <button @click="dismissToast(toast.id)" class="text-white/70 hover:text-white transition-colors shrink-0">
+        <button @click="dismissToast(toast.id)" class="text-white/70 hover:text-white transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-white rounded" aria-label="Dismiss notification">
           <X :size="16" />
         </button>
       </div>

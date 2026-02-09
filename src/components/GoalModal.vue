@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, watch } from 'vue';
+import { reactive, computed, watch, onMounted, onUnmounted } from 'vue';
 import { X } from 'lucide-vue-next';
 import type { Goal, GoalPeriod, GoalStatus } from '../types';
 
@@ -116,19 +116,22 @@ const setStatus = (s: GoalStatus) => {
   }
 };
 
-// Also watch progress to auto-complete if dragged to 100?
-// Optional UX: if user drags to 100, set status to done?
-// Let's keep it simple for now.
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') emit('close');
+};
+
+onMounted(() => document.addEventListener('keydown', handleKeydown));
+onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 </script>
 
 <template>
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" @click="$emit('close')"></div>
 
-    <div class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 animate-in fade-in zoom-in duration-200">
+    <div class="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 animate-in fade-in zoom-in duration-200">
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-bold text-slate-800">{{ goal ? 'Edit Goal' : 'New Goal' }}</h2>
-        <button @click="$emit('close')" class="text-slate-400 hover:text-slate-600 transition-colors">
+        <button @click="$emit('close')" class="text-slate-400 hover:text-slate-600 transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" aria-label="Close modal">
           <X :size="24" />
         </button>
       </div>
