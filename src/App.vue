@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, Archive, X, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, Inbox } from 'lucide-vue-next';
 import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
+import GoalCard from './components/GoalCard.vue';
 import GoalColumn from './components/GoalColumn.vue';
 import GoalModal from './components/GoalModal.vue';
 import AuthScreen from './components/AuthScreen.vue';
@@ -28,13 +29,12 @@ const dismissToast = (id: number) => {
 const isModalOpen = ref(false);
 const editingGoal = ref<Goal | null>(null);
 
-type ViewType = 'dashboard' | 'backlog' | 'archive';
+type ViewType = 'dashboard' | 'backlog';
 const currentView = ref<ViewType>('dashboard');
 
 const views = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'backlog', label: 'Backlog', icon: ListTodo },
-  { id: 'archive', label: 'Archive', icon: Archive },
 ];
 
 const goals = ref<Goal[]>([]);
@@ -93,7 +93,7 @@ const fetchGoals = async () => {
       title: g.title,
       description: g.description,
       period: g.period as GoalPeriod,
-      status: (g.status || 'planned') as GoalStatus,
+      status: (g.status === 'archived' ? 'done' : (g.status || 'planned')) as GoalStatus,
       progress: g.progress || 0,
       createdAt: new Date(g.created_at).getTime(),
       weekNumber: g.week_number || (g.period === 'weekly' ? currentWeek : undefined),
@@ -138,8 +138,6 @@ const filterByView = (list: Goal[]) => {
     return list.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
   } else if (currentView.value === 'backlog') {
     return list.filter(g => g.status === 'planned');
-  } else if (currentView.value === 'archive') {
-    return list.filter(g => g.status === 'archived');
   }
   return list;
 };
@@ -171,12 +169,13 @@ const yearlyGoals = computed(() => {
   return filterByDate(filterByView(byPeriod), 'yearly');
 });
 
-const emptyMessages = computed(() => {
-  const view = currentView.value;
-  if (view === 'backlog') return { monthly: 'Backlog is empty. Great job planning!', weekly: 'Backlog is empty. Great job planning!', yearly: 'Backlog is empty. Great job planning!' };
-  if (view === 'archive') return { monthly: 'No archived goals yet.', weekly: 'No archived goals yet.', yearly: 'No archived goals yet.' };
-  return { monthly: 'No monthly goals. Add one or move from Backlog.', weekly: 'No goals this week.', yearly: 'No yearly goals yet.' };
-});
+const emptyMessages = computed(() => ({
+  monthly: 'No monthly goals. Add one or move from Backlog.',
+  weekly: 'No goals this week.',
+  yearly: 'No yearly goals yet.',
+}));
+
+const backlogGoals = computed(() => goals.value.filter(g => g.status === 'planned'));
 
 const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
   // Find goals that don't match the new context
@@ -306,6 +305,20 @@ const saveGoal = async (goalData: {
   editingGoal.value = null;
 };
 
+const startGoal = async (id: string) => {
+  const goal = goals.value.find(g => g.id === id);
+  if (!goal) return;
+
+  // Optimistic update
+  goal.status = 'to-do';
+
+  const { error } = await supabase.from('goals').update({ status: 'to-do', updated_at: new Date().toISOString() }).eq('id', id);
+  if (error) {
+    goal.status = 'planned';
+    showError('Failed to start goal. Please try again.');
+  }
+};
+
 const deleteGoal = async (id: string) => {
   const previousGoals = [...goals.value];
   goals.value = goals.value.filter(g => g.id !== id);
@@ -407,10 +420,34 @@ const deleteGoal = async (id: string) => {
         </div>
       </main>
 
-      <!-- Board -->
+      <!-- Backlog (flat grid) -->
+      <main v-else-if="currentView === 'backlog'" class="max-w-7xl mx-auto px-6">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-slate-800">Backlog</h2>
+          <p class="text-sm text-slate-500 mt-1">Ideas and goals waiting to be started.</p>
+        </div>
+
+        <div v-if="backlogGoals.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
+          <Inbox :size="40" class="text-slate-300 mb-3" />
+          <p class="text-slate-400 font-medium">Backlog is empty. Great job planning!</p>
+        </div>
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <GoalCard
+            v-for="goal in backlogGoals"
+            :key="goal.id"
+            :goal="goal"
+            @delete="deleteGoal"
+            @edit="openEditModal"
+            @start="startGoal"
+          />
+        </div>
+      </main>
+
+      <!-- Dashboard Board -->
       <main v-else class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          
+
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
           <div class="xl:col-span-3 space-y-4">
              <div class="flex items-center gap-3 mb-2">
@@ -468,7 +505,7 @@ const deleteGoal = async (id: string) => {
               <div class="flex items-center gap-3 mb-2">
                 <h2 class="text-2xl font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
               </div>
-             
+
              <GoalColumn
                 title="Yearly Goals"
                 period="yearly"

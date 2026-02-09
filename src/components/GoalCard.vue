@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
 import type { Goal, GoalStatus } from '../types';
-import { Trash2, Pencil, Circle, CircleDashed, Timer, CheckCircle2, Archive, GripVertical, X } from 'lucide-vue-next';
+import { Trash2, Pencil, Circle, CircleDashed, Timer, CheckCircle2, GripVertical, X } from 'lucide-vue-next';
 
 const props = defineProps<{
   goal: Goal;
@@ -10,6 +10,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'delete', id: string): void;
   (e: 'edit', goal: Goal): void;
+  (e: 'start', id: string): void;
 }>();
 
 const confirmingDelete = ref(false);
@@ -37,12 +38,11 @@ onUnmounted(() => {
   if (deleteTimeout) clearTimeout(deleteTimeout);
 });
 
-const statusConfig: Record<GoalStatus, { icon: any, color: string, bg: string, barColor?: string }> = {
+const statusConfig: Record<string, { icon: any, color: string, bg: string, barColor?: string }> = {
   'planned': { icon: Circle, color: 'text-slate-500', bg: 'bg-slate-100' },
   'to-do': { icon: CircleDashed, color: 'text-blue-600', bg: 'bg-blue-50' },
   'in-progress': { icon: Timer, color: 'text-violet-600', bg: 'bg-violet-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
   'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
-  'archived': { icon: Archive, color: 'text-stone-500', bg: 'bg-stone-100' },
 };
 
 const formatStatus = (s: string) => s.split('-').join(' ');
@@ -87,6 +87,14 @@ const formatStatus = (s: string) => s.split('-').join(' ');
           </button>
         </template>
         <template v-else>
+          <button
+            v-if="goal.status === 'planned'"
+            @click="$emit('start', goal.id)"
+            class="text-xs font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-md transition-colors"
+            aria-label="Start goal"
+          >
+            Start
+          </button>
           <button
             @click="$emit('edit', goal)"
             class="text-slate-300 hover:text-primary transition-colors p-1 focus-visible:ring-2 focus-visible:ring-primary rounded"

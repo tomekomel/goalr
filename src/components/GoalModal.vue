@@ -87,14 +87,13 @@ const handleSubmit = () => {
 };
 
 const periods: GoalPeriod[] = ['weekly', 'monthly', 'yearly'];
-const statuses: GoalStatus[] = ['planned', 'to-do', 'in-progress', 'done', 'archived'];
+const statuses: GoalStatus[] = ['planned', 'to-do', 'in-progress', 'done'];
 
-const statusColors: Record<GoalStatus, string> = {
+const statusColors: Record<string, string> = {
   'planned': 'bg-slate-500 border-slate-500 text-white shadow-slate-500/30',
   'to-do': 'bg-blue-500 border-blue-500 text-white shadow-blue-500/30',
   'in-progress': 'bg-violet-500 border-violet-500 text-white shadow-violet-500/30',
   'done': 'bg-emerald-500 border-emerald-500 text-white shadow-emerald-500/30',
-  'archived': 'bg-stone-500 border-stone-500 text-white shadow-stone-500/30',
 };
 
 const formatStatus = (s: string) => s.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
