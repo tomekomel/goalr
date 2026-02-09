@@ -51,9 +51,9 @@ const formatStatus = (s: string) => s.split('-').join(' ');
 <template>
   <div class="bg-white p-5 rounded-lg card-shadow border border-slate-100 group relative hover:border-slate-200 transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
     <!-- Header: Title + Drag Handle -->
-    <div class="flex items-start gap-2 mb-1.5">
-      <GripVertical :size="16" class="text-slate-300 mt-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div class="flex items-center gap-1.5 mb-1.5">
       <h3 class="font-bold text-slate-800 leading-tight text-lg">{{ goal.title }}</h3>
+      <GripVertical :size="16" class="text-slate-300 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
 
     <!-- Meta: Status & Actions -->
@@ -64,8 +64,8 @@ const formatStatus = (s: string) => s.split('-').join(' ');
         :class="[statusConfig[goal.status].bg, statusConfig[goal.status].color]"
       >
         <component :is="statusConfig[goal.status].icon" :size="12" stroke-width="3" />
-        <span class="text-xs font-bold uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
-        <span v-if="goal.status === 'in-progress'" class="text-xs font-bold">&middot; {{ goal.progress }}%</span>
+        <span class="text-xs font-medium uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
+        <span v-if="goal.status === 'in-progress'" class="text-xs font-medium">&middot; {{ goal.progress }}%</span>
       </div>
 
       <!-- Actions (Visible on Hover) -->
@@ -111,7 +111,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <!-- Footer: Date (Status Icon removed as it is now in header) -->
     <div class="flex items-center gap-2 pt-3 border-t border-slate-50 mt-auto">
       <div class="h-1.5 w-1.5 rounded-full bg-slate-200"></div>
-      <span class="text-xs uppercase tracking-wider font-bold text-slate-500">
+      <span class="text-xs uppercase tracking-wider font-medium text-slate-500">
         {{ new Date(goal.createdAt).toLocaleDateString('en-GB') }}
       </span>
     </div>
