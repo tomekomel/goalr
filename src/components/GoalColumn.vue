@@ -50,8 +50,8 @@ const headerClasses = {
 
 const gridClasses = {
   'default': 'grid-cols-1',
-  'highlight': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-  'compact': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+  'highlight': 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
+  'compact': 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
 };
 </script>
 
