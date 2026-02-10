@@ -431,7 +431,7 @@ const deleteGoal = async (id: string) => {
           <p class="text-sm text-slate-400 font-medium">Backlog is empty. Great job planning!</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           <GoalCard
             v-for="goal in backlogGoals"
             :key="goal.id"
@@ -466,7 +466,7 @@ const deleteGoal = async (id: string) => {
                 </button>
              </div>
 
-             <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-4">
+             <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-5">
                <!-- Row 1: Monthly Goals -->
                <GoalColumn
                   title="Monthly Focus"
@@ -481,7 +481,7 @@ const deleteGoal = async (id: string) => {
                />
 
                <!-- Rows 2-5: Weekly Goals -->
-               <div class="flex flex-col gap-3 px-4 pb-4">
+               <div class="flex flex-col gap-4 px-4 pb-4">
                   <GoalColumn
                     v-for="week in 4"
                     :key="week"
