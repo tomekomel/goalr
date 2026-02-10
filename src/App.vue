@@ -334,51 +334,51 @@ const deleteGoal = async (id: string) => {
   <div class="min-h-screen bg-slate-50">
     <div v-if="session" class="pb-20">
       <!-- Header -->
-      <header class="max-w-7xl mx-auto px-6 pt-8 sm:pt-12 pb-8">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-8">
+      <header class="max-w-7xl mx-auto px-6 pt-6 sm:pt-8 pb-5">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 mb-5">
           <div>
-            <div class="flex items-center gap-3 mb-2">
-              <div class="bg-primary p-2 rounded-xl shadow-lg shadow-primary/30 text-white">
-                <Target :size="24" />
+            <div class="flex items-center gap-2.5 mb-1">
+              <div class="bg-primary p-1.5 rounded-lg shadow-lg shadow-primary/30 text-white">
+                <Target :size="20" />
               </div>
-              <h1 class="text-4xl font-black text-slate-900 tracking-tighter">goalr.</h1>
+              <h1 class="text-3xl font-black text-slate-900 tracking-tighter">goalr.</h1>
             </div>
-            <p class="text-slate-500 font-medium">Design your future, step by step.</p>
+            <p class="text-slate-500 font-medium text-sm">Design your future, step by step.</p>
           </div>
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
              <button
               @click="handleSignOut"
-              class="bg-white hover:bg-slate-50 text-slate-500 px-4 py-3.5 rounded-2xl font-bold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary rounded-2xl"
+              class="bg-white hover:bg-slate-50 text-slate-500 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="Sign out"
             >
-              <LogOut :size="20" />
+              <LogOut :size="16" />
             </button>
 
             <button
               @click="openAddModal"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl shadow-emerald-200 flex items-center gap-2 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
-              <Plus :size="20" />
+              <Plus :size="16" />
               Add Goal
             </button>
           </div>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="flex items-center gap-2 pb-1 overflow-x-auto">
+        <div class="flex items-center gap-1 pb-1 overflow-x-auto">
           <button
             v-for="view in views"
             :key="view.id"
             @click="currentView = view.id as ViewType"
-            class="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary"
             :class="[
               currentView === view.id
                 ? 'text-emerald-600 bg-emerald-50/50'
                 : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
             ]"
           >
-            <component :is="view.icon" :size="16" />
+            <component :is="view.icon" :size="14" />
             {{ view.label }}
           </button>
         </div>
@@ -386,22 +386,21 @@ const deleteGoal = async (id: string) => {
 
       <!-- Loading Skeleton -->
       <main v-if="isLoading" class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
-          <div class="xl:col-span-3 space-y-4">
-            <div class="h-8 w-48 bg-slate-200 rounded-lg animate-pulse mb-4"></div>
-            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-6 space-y-6">
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                <div v-for="i in 3" :key="i" class="bg-white rounded-lg p-5 space-y-3">
-                  <div class="h-5 bg-slate-200 rounded animate-pulse w-3/4"></div>
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          <div class="xl:col-span-3 space-y-3">
+            <div class="h-6 w-40 bg-slate-200 rounded animate-pulse mb-3"></div>
+            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-4 space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                <div v-for="i in 3" :key="i" class="bg-white rounded-lg p-3.5 space-y-2">
+                  <div class="h-4 bg-slate-200 rounded animate-pulse w-3/4"></div>
                   <div class="h-3 bg-slate-100 rounded animate-pulse w-1/2"></div>
-                  <div class="h-10 bg-slate-100 rounded animate-pulse"></div>
                 </div>
               </div>
-              <div v-for="w in 2" :key="w" class="bg-white rounded-xl p-4">
-                <div class="h-4 bg-slate-200 rounded animate-pulse w-20 mb-3"></div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  <div v-for="j in 2" :key="j" class="bg-slate-50 rounded-lg p-5 space-y-3">
-                    <div class="h-5 bg-slate-200 rounded animate-pulse w-2/3"></div>
+              <div v-for="w in 2" :key="w" class="bg-white rounded-lg p-3">
+                <div class="h-3 bg-slate-200 rounded animate-pulse w-16 mb-2"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  <div v-for="j in 2" :key="j" class="bg-slate-50 rounded-lg p-3.5 space-y-2">
+                    <div class="h-4 bg-slate-200 rounded animate-pulse w-2/3"></div>
                     <div class="h-3 bg-slate-100 rounded animate-pulse w-1/3"></div>
                   </div>
                 </div>
@@ -409,10 +408,10 @@ const deleteGoal = async (id: string) => {
             </div>
           </div>
           <div class="xl:col-span-1">
-            <div class="h-8 w-32 bg-slate-200 rounded-lg animate-pulse mb-6"></div>
-            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-4 space-y-3">
-              <div v-for="i in 2" :key="i" class="bg-white rounded-lg p-5 space-y-3">
-                <div class="h-5 bg-slate-200 rounded animate-pulse w-3/4"></div>
+            <div class="h-6 w-28 bg-slate-200 rounded animate-pulse mb-3"></div>
+            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-3 space-y-2">
+              <div v-for="i in 2" :key="i" class="bg-white rounded-lg p-3.5 space-y-2">
+                <div class="h-4 bg-slate-200 rounded animate-pulse w-3/4"></div>
                 <div class="h-3 bg-slate-100 rounded animate-pulse w-1/2"></div>
               </div>
             </div>
@@ -422,17 +421,17 @@ const deleteGoal = async (id: string) => {
 
       <!-- Backlog (flat grid) -->
       <main v-else-if="currentView === 'backlog'" class="max-w-7xl mx-auto px-6">
-        <div class="mb-6">
-          <h2 class="text-2xl font-bold text-slate-800">Backlog</h2>
-          <p class="text-sm text-slate-500 mt-1">Ideas and goals waiting to be started.</p>
+        <div class="mb-4">
+          <h2 class="text-lg font-bold text-slate-800">Backlog</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Ideas and goals waiting to be started.</p>
         </div>
 
-        <div v-if="backlogGoals.length === 0" class="flex flex-col items-center justify-center py-20 text-center">
-          <Inbox :size="40" class="text-slate-300 mb-3" />
-          <p class="text-slate-400 font-medium">Backlog is empty. Great job planning!</p>
+        <div v-if="backlogGoals.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
+          <Inbox :size="32" class="text-slate-300 mb-2" />
+          <p class="text-sm text-slate-400 font-medium">Backlog is empty. Great job planning!</p>
         </div>
 
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
           <GoalCard
             v-for="goal in backlogGoals"
             :key="goal.id"
@@ -446,28 +445,28 @@ const deleteGoal = async (id: string) => {
 
       <!-- Dashboard Board -->
       <main v-else class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
 
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
-          <div class="xl:col-span-3 space-y-4">
-             <div class="flex items-center gap-3 mb-5">
-                <button @click="navigateMonth(-1)" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
-                  <ChevronLeft :size="20" />
+          <div class="xl:col-span-3 space-y-3">
+             <div class="flex items-center gap-2 mb-3">
+                <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
+                  <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-2xl font-bold text-slate-800">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
-                <button @click="navigateMonth(1)" class="p-1.5 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Next month">
-                  <ChevronRight :size="20" />
+                <h2 class="text-lg font-bold text-slate-800">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
+                <button @click="navigateMonth(1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Next month">
+                  <ChevronRight :size="18" />
                 </button>
                 <button
                   v-if="!isCurrentMonth"
                   @click="goToToday"
-                  class="ml-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors"
+                  class="ml-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md hover:bg-emerald-100 transition-colors"
                 >
                   Today
                 </button>
              </div>
 
-             <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-6">
+             <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-4">
                <!-- Row 1: Monthly Goals -->
                <GoalColumn
                   title="Monthly Focus"
@@ -475,14 +474,14 @@ const deleteGoal = async (id: string) => {
                   :goals="monthlyGoals"
                   variant="highlight"
                   :empty-message="emptyMessages.monthly"
-                  class="px-6 pt-6"
+                  class="px-4 pt-4"
                   @update:goals="updateGoals({ period: 'monthly' }, $event)"
                   @delete-goal="deleteGoal"
                   @edit-goal="openEditModal"
                />
 
                <!-- Rows 2-5: Weekly Goals -->
-               <div class="flex flex-col gap-4 px-6 pb-6">
+               <div class="flex flex-col gap-3 px-4 pb-4">
                   <GoalColumn
                     v-for="week in 4"
                     :key="week"
@@ -501,9 +500,9 @@ const deleteGoal = async (id: string) => {
           </div>
 
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
-          <div class="xl:col-span-1 space-y-6">
-              <div class="flex items-center gap-3 mb-5">
-                <h2 class="text-2xl font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
+          <div class="xl:col-span-1 space-y-3">
+              <div class="flex items-center gap-2 mb-3">
+                <h2 class="text-lg font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
               </div>
 
              <GoalColumn

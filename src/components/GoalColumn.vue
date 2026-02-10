@@ -37,9 +37,9 @@ const onDragChange = () => {
 };
 
 const containerClasses = {
-  'default': 'bg-slate-100/50 border-slate-200/50 p-4',
-  'highlight': 'bg-transparent border-transparent py-4 px-0', // Clean style for Monthly
-  'compact': 'bg-white border-slate-100 p-4', // Cleaner style for Weekly rows
+  'default': 'bg-slate-100/50 border-slate-200/50 p-3',
+  'highlight': 'bg-transparent border-transparent py-3 px-0',
+  'compact': 'bg-white border-slate-100 p-3',
 };
 
 const headerClasses = {
@@ -60,18 +60,18 @@ const gridClasses = {
     class="flex flex-col w-full rounded-xl border transition-colors duration-300"
     :class="[
       containerClasses[variant],
-      variant === 'default' ? 'h-full min-h-[500px]' : 'h-auto min-h-[150px]',
+      variant === 'default' ? 'h-full min-h-[300px]' : 'h-auto min-h-[80px]',
       isCurrentWeek ? 'ring-2 ring-emerald-400/50 border-emerald-200' : '',
       variant === 'compact' && !isCurrentWeek ? 'opacity-80' : ''
     ]"
   >
-    <div class="flex items-center justify-between mb-4 px-2">
-      <h2 class="font-bold flex items-center gap-2" :class="headerClasses[variant]">
-        <Target v-if="variant === 'highlight'" :size="20" class="text-emerald-600" />
+    <div class="flex items-center justify-between mb-2.5 px-1">
+      <h2 class="font-semibold text-sm flex items-center gap-1.5" :class="headerClasses[variant]">
+        <Target v-if="variant === 'highlight'" :size="16" class="text-emerald-600" />
         {{ title }}
-        <span v-if="isCurrentWeek" class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Current</span>
+        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">Current</span>
       </h2>
-      <span class="bg-white px-2.5 py-0.5 rounded-full text-xs font-semibold text-slate-400 border border-slate-200 shadow-sm">
+      <span class="bg-white px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-400 border border-slate-200">
         {{ localGoals.length }}
       </span>
     </div>
@@ -80,7 +80,7 @@ const gridClasses = {
       v-model="localGoals"
       group="goals"
       item-key="id"
-      class="flex-1 grid content-start gap-3 min-h-[100px]"
+      class="flex-1 grid content-start gap-2 min-h-[60px]"
       :class="gridClasses[variant]"
       ghost-class="ghost-card"
       @change="onDragChange"
@@ -93,9 +93,9 @@ const gridClasses = {
         />
       </template>
       <template #footer>
-        <div v-if="localGoals.length === 0" class="col-span-full flex flex-col items-center justify-center py-8 text-center">
-          <Inbox :size="28" class="text-slate-300 mb-2" />
-          <p class="text-sm text-slate-400 font-medium">{{ emptyMessage }}</p>
+        <div v-if="localGoals.length === 0" class="col-span-full flex flex-col items-center justify-center py-5 text-center">
+          <Inbox :size="22" class="text-slate-300 mb-1.5" />
+          <p class="text-xs text-slate-400 font-medium">{{ emptyMessage }}</p>
         </div>
       </template>
     </draggable>
