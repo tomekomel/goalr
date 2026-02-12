@@ -55,6 +55,16 @@ const navigateMonth = (delta: number) => {
   currentDate.value = d;
 };
 
+const navigateYear = (delta: number) => {
+  const d = new Date(currentDate.value);
+  d.setFullYear(d.getFullYear() + delta);
+  currentDate.value = d;
+};
+
+const isCurrentYear = computed(() => {
+  return currentDate.value.getFullYear() === new Date().getFullYear();
+});
+
 const goToToday = () => {
   currentDate.value = new Date();
 };
@@ -502,7 +512,20 @@ const deleteGoal = async (id: string) => {
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
           <div class="xl:col-span-1 space-y-3">
               <div class="flex items-center gap-2 mb-3">
+                <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous year">
+                  <ChevronLeft :size="18" />
+                </button>
                 <h2 class="text-lg font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
+                <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Next year">
+                  <ChevronRight :size="18" />
+                </button>
+                <button
+                  v-if="!isCurrentYear"
+                  @click="goToToday"
+                  class="ml-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md hover:bg-indigo-100 transition-colors"
+                >
+                  Today
+                </button>
               </div>
 
              <GoalColumn
