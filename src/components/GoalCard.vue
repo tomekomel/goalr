@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
-import type { Goal, GoalStatus } from '../types';
+import type { Goal } from '../types';
 import { Trash2, Pencil, Circle, CircleDashed, Timer, CheckCircle2, GripVertical, X } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -45,6 +45,10 @@ const statusConfig: Record<string, { icon: any, color: string, bg: string, barCo
   'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
 };
 
+const getStatusConfig = (status: string) => {
+  return statusConfig[status] || statusConfig['planned'];
+};
+
 const formatStatus = (s: string) => s.split('-').join(' ');
 </script>
 
@@ -61,9 +65,9 @@ const formatStatus = (s: string) => s.split('-').join(' ');
       <!-- Status Badge -->
       <div
         class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-transparent"
-        :class="[statusConfig[goal.status].bg, statusConfig[goal.status].color]"
+        :class="[getStatusConfig(goal.status).bg, getStatusConfig(goal.status).color]"
       >
-        <component :is="statusConfig[goal.status].icon" :size="10" stroke-width="3" />
+        <component :is="getStatusConfig(goal.status).icon" :size="10" stroke-width="3" />
         <span class="text-[10px] font-medium uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
         <span v-if="goal.status === 'in-progress'" class="text-[10px] font-medium">&middot; {{ goal.progress }}%</span>
       </div>
@@ -128,7 +132,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <div v-if="['in-progress', 'done'].includes(goal.status)" class="absolute bottom-0 left-0 right-0 h-1.5 overflow-hidden rounded-b-lg">
       <div 
         class="h-full transition-all duration-700 ease-out"
-        :class="statusConfig[goal.status].barColor"
+        :class="getStatusConfig(goal.status).barColor"
         :style="{ width: goal.status === 'done' ? '100%' : `${goal.progress}%` }"
       ></div>
     </div>
