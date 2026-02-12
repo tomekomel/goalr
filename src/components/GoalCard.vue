@@ -46,7 +46,7 @@ const statusConfig: Record<string, { icon: any, color: string, bg: string, barCo
 };
 
 const getStatusConfig = (status: string) => {
-  return statusConfig[status] || statusConfig['planned'];
+  return (statusConfig[status] || statusConfig['planned'])!;
 };
 
 const formatStatus = (s: string) => s.split('-').join(' ');
