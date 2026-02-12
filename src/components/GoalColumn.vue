@@ -61,7 +61,7 @@ const gridClasses = {
     :class="[
       containerClasses[variant],
       variant === 'default' ? 'h-full min-h-[300px]' : 'h-auto min-h-[80px]',
-      isCurrentWeek ? 'ring-2 ring-emerald-400/50 border-emerald-200' : '',
+      isCurrentWeek ? 'border-l-3 border-l-emerald-500' : '',
       variant === 'compact' && !isCurrentWeek ? 'opacity-80' : ''
     ]"
   >
