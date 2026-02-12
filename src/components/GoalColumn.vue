@@ -39,7 +39,7 @@ const onDragChange = () => {
 const containerClasses = {
   'default': 'bg-slate-100/50 border-slate-200/50 p-3',
   'highlight': 'bg-transparent border-transparent py-3 px-0',
-  'compact': 'bg-white border-slate-100 p-3',
+  'compact': 'bg-white border-slate-100 p-4',
 };
 
 const headerClasses = {
@@ -80,7 +80,7 @@ const gridClasses = {
       v-model="localGoals"
       group="goals"
       item-key="id"
-      class="flex-1 grid content-start gap-3 min-h-[60px]"
+      class="flex-1 grid content-start gap-4 min-h-[60px]"
       :class="gridClasses[variant]"
       ghost-class="ghost-card"
       @change="onDragChange"

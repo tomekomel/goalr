@@ -357,20 +357,20 @@ const deleteGoal = async (id: string) => {
           </div>
 
           <div class="flex items-center gap-3">
-             <button
-              @click="handleSignOut"
-              class="bg-white hover:bg-slate-50 text-slate-500 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
-              aria-label="Sign out"
-            >
-              <LogOut :size="16" />
-            </button>
-
             <button
               @click="openAddModal"
               class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Plus :size="16" />
               Add Goal
+            </button>
+
+            <button
+              @click="handleSignOut"
+              class="bg-white hover:bg-slate-50 text-slate-500 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label="Sign out"
+            >
+              <LogOut :size="16" />
             </button>
           </div>
         </div>
@@ -491,7 +491,7 @@ const deleteGoal = async (id: string) => {
                />
 
                <!-- Rows 2-5: Weekly Goals -->
-               <div class="flex flex-col gap-4 px-4 pb-4">
+               <div class="flex flex-col gap-5 px-4 pb-4">
                   <GoalColumn
                     v-for="week in 4"
                     :key="week"

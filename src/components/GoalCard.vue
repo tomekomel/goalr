@@ -64,12 +64,12 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <div class="flex items-center justify-between mb-2">
       <!-- Status Badge -->
       <div
-        class="flex items-center gap-1 px-2 py-0.5 rounded-full border border-transparent"
+        class="flex items-center gap-0.5 px-1.5 py-px rounded-full border border-transparent"
         :class="[getStatusConfig(goal.status).bg, getStatusConfig(goal.status).color]"
       >
-        <component :is="getStatusConfig(goal.status).icon" :size="10" stroke-width="3" />
-        <span class="text-[10px] font-medium uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
-        <span v-if="goal.status === 'in-progress'" class="text-[10px] font-medium">&middot; {{ goal.progress }}%</span>
+        <component :is="getStatusConfig(goal.status).icon" :size="8" stroke-width="3" />
+        <span class="text-[9px] font-medium uppercase tracking-wider">{{ formatStatus(goal.status) }}</span>
+        <span v-if="goal.status === 'in-progress'" class="text-[9px] font-medium">&middot; {{ goal.progress }}%</span>
       </div>
 
       <!-- Actions (Visible on Hover) -->
@@ -121,7 +121,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <p v-if="goal.description" class="text-slate-500 text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
 
     <!-- Footer: Date -->
-    <div class="flex items-center gap-1.5 pt-2 border-t border-slate-50 mt-auto">
+    <div class="flex items-center gap-1.5 pt-2 mt-auto">
       <div class="h-1 w-1 rounded-full bg-slate-200"></div>
       <span class="text-[10px] uppercase tracking-wider font-medium text-slate-400">
         {{ new Date(goal.createdAt).toLocaleDateString('en-GB') }}
