@@ -187,6 +187,26 @@ const emptyMessages = computed(() => ({
 
 const backlogGoals = computed(() => goals.value.filter(g => g.status === 'planned'));
 
+// Stats for monthly (monthly + weekly combined) and yearly
+const calcStats = (goalList: Goal[]) => {
+  const total = goalList.length;
+  const done = goalList.filter(g => g.status === 'done').length;
+  const inProgress = goalList.filter(g => g.status === 'in-progress').length;
+  const toDo = total - done - inProgress;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  return { total, done, inProgress, toDo, pct };
+};
+
+const monthStats = computed(() => calcStats([...monthlyGoals.value, ...weeklyGoals.value]));
+const yearStats = computed(() => calcStats(yearlyGoals.value));
+
+const donutBg = (stats: { total: number; done: number; inProgress: number }) => {
+  if (stats.total === 0) return '#e2e8f0';
+  const doneP = (stats.done / stats.total) * 100;
+  const ipP = (stats.inProgress / stats.total) * 100;
+  return `conic-gradient(#10b981 0% ${doneP}%, #8b5cf6 ${doneP}% ${doneP + ipP}%, #e2e8f0 ${doneP + ipP}% 100%)`;
+};
+
 const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
   // Find goals that don't match the new context
   const goalsToUpdate = newGoals.filter(g => {
@@ -477,6 +497,29 @@ const deleteGoal = async (id: string) => {
              </div>
 
              <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-5">
+               <!-- Month Stats Bar -->
+               <div v-if="monthStats.total > 0" class="flex items-center gap-3 mx-4 mt-4 px-3 py-2 bg-white/60 rounded-lg border border-slate-100">
+                 <div class="relative w-8 h-8 rounded-full shrink-0 transition-all duration-500" :style="{ background: donutBg(monthStats) }">
+                   <div class="absolute inset-[5px] rounded-full bg-white/90"></div>
+                   <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-slate-600">{{ monthStats.pct }}</span>
+                 </div>
+                 <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400 flex-wrap">
+                   <span>{{ monthStats.total }} total</span>
+                   <span class="text-slate-200">&middot;</span>
+                   <span class="text-emerald-600">{{ monthStats.done }} done</span>
+                   <span class="text-slate-200">&middot;</span>
+                   <span class="text-violet-600">{{ monthStats.inProgress }} in progress</span>
+                   <span class="text-slate-200">&middot;</span>
+                   <span class="text-blue-600">{{ monthStats.toDo }} to-do</span>
+                 </div>
+                 <div class="ml-auto flex items-center gap-2 shrink-0">
+                   <div class="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                     <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: monthStats.pct + '%' }"></div>
+                   </div>
+                   <span class="text-[11px] font-semibold text-emerald-600">{{ monthStats.pct }}%</span>
+                 </div>
+               </div>
+
                <!-- Row 1: Monthly Goals -->
                <GoalColumn
                   title="Monthly Focus"
@@ -527,6 +570,24 @@ const deleteGoal = async (id: string) => {
                   Today
                 </button>
               </div>
+
+             <!-- Year Stats Bar -->
+             <div v-if="yearStats.total > 0" class="flex items-center gap-2.5 px-3 py-2 bg-slate-100/50 rounded-lg border border-slate-200/50 mb-1">
+               <div class="relative w-7 h-7 rounded-full shrink-0 transition-all duration-500" :style="{ background: donutBg(yearStats) }">
+                 <div class="absolute inset-[5px] rounded-full bg-white/90"></div>
+                 <span class="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-slate-600">{{ yearStats.pct }}</span>
+               </div>
+               <div class="flex flex-col gap-1 flex-1 min-w-0">
+                 <div class="flex items-center gap-1.5 text-[10px] font-medium text-slate-400 flex-wrap">
+                   <span class="text-emerald-600">{{ yearStats.done }}<span class="text-slate-300">/</span>{{ yearStats.total }}</span>
+                   <span class="text-slate-200">&middot;</span>
+                   <span class="text-violet-500">{{ yearStats.inProgress }} wip</span>
+                 </div>
+                 <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                   <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: yearStats.pct + '%' }"></div>
+                 </div>
+               </div>
+             </div>
 
              <GoalColumn
                 title="Yearly Goals"
