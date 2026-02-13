@@ -24,8 +24,8 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-sm bg-white rounded-[32px] shadow-2xl p-8 md:p-10 border border-slate-100 animate-in fade-in zoom-in duration-300">
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-white dark:bg-slate-800 rounded-[32px] shadow-2xl p-8 md:p-10 border border-slate-100 dark:border-slate-700 animate-in fade-in zoom-in duration-300">
       
       <!-- Header -->
       <div class="text-center mb-10">
@@ -34,13 +34,13 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
             <Target :size="32" />
           </div>
         </div>
-        <h1 class="text-3xl font-black text-slate-900 tracking-tighter mb-2">goalr.</h1>
-        <p class="text-slate-500 font-medium text-sm">Design your future, step by step.</p>
+        <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter mb-2">goalr.</h1>
+        <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Design your future, step by step.</p>
       </div>
 
       <!-- Actions -->
       <div class="flex flex-col items-center gap-6">
-        <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Sign in with</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Sign in with</p>
         
         <div class="flex items-center justify-center gap-4 w-full">
           <!-- Google -->
@@ -48,7 +48,7 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
             @click="handleLogin('google')"
             :disabled="isLoading"
             aria-label="Continue with Google"
-            class="group relative flex items-center justify-center w-16 h-16 bg-white border border-slate-200 rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:border-slate-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
+            class="group relative flex items-center justify-center w-16 h-16 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
           >
             <svg class="w-6 h-6 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -75,7 +75,7 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
             @click="handleLogin('twitter')"
             :disabled="isLoading"
             aria-label="Continue with X"
-            class="group relative flex items-center justify-center w-16 h-16 bg-slate-900 text-white rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:shadow-slate-900/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
+            class="group relative flex items-center justify-center w-16 h-16 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:shadow-slate-900/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
           >
             <svg class="w-5 h-5 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -86,7 +86,7 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
 
       <!-- Footer -->
       <div class="mt-10 text-center">
-        <p class="text-xs text-slate-500 font-medium px-4 leading-relaxed">
+        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium px-4 leading-relaxed">
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>

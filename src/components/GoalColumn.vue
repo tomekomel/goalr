@@ -37,15 +37,15 @@ const onDragChange = () => {
 };
 
 const containerClasses = {
-  'default': 'bg-slate-100/50 border-slate-200/50 p-3',
+  'default': 'bg-slate-100/50 dark:bg-slate-800/50 border-slate-200/50 dark:border-slate-700/50 p-3',
   'highlight': 'bg-transparent border-transparent py-3 px-0',
-  'compact': 'bg-white border-slate-100 p-4',
+  'compact': 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 p-4',
 };
 
 const headerClasses = {
-  'default': 'text-slate-700',
-  'highlight': 'text-slate-900',
-  'compact': 'text-slate-500 text-sm uppercase tracking-wide',
+  'default': 'text-slate-700 dark:text-slate-300',
+  'highlight': 'text-slate-900 dark:text-slate-100',
+  'compact': 'text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wide',
 };
 
 const gridClasses = {
@@ -69,9 +69,9 @@ const gridClasses = {
       <h2 class="font-semibold text-sm flex items-center gap-1.5" :class="headerClasses[variant]">
         <Target v-if="variant === 'highlight'" :size="16" class="text-emerald-600" />
         {{ title }}
-        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">Current</span>
+        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded-full">Current</span>
       </h2>
-      <span class="bg-white px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-400 border border-slate-200">
+      <span class="bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-400 border border-slate-200 dark:border-slate-700">
         {{ localGoals.length }}
       </span>
     </div>
@@ -94,8 +94,8 @@ const gridClasses = {
       </template>
       <template #footer>
         <div v-if="localGoals.length === 0" class="col-span-full flex flex-col items-center justify-center py-5 text-center">
-          <Inbox :size="22" class="text-slate-300 mb-1.5" />
-          <p class="text-xs text-slate-400 font-medium">{{ emptyMessage }}</p>
+          <Inbox :size="22" class="text-slate-300 dark:text-slate-600 mb-1.5" />
+          <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">{{ emptyMessage }}</p>
         </div>
       </template>
     </draggable>

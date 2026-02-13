@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, Inbox } from 'lucide-vue-next';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, Inbox, Moon, Sun } from 'lucide-vue-next';
+import { useDarkMode } from './composables/useDarkMode';
 import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
@@ -9,6 +10,7 @@ import GoalColumn from './components/GoalColumn.vue';
 import GoalModal from './components/GoalModal.vue';
 import AuthScreen from './components/AuthScreen.vue';
 
+const { isDark, toggle: toggleDark } = useDarkMode();
 const session = ref<Session | null>(null);
 
 // Toast notifications
@@ -201,10 +203,11 @@ const monthStats = computed(() => calcStats([...monthlyGoals.value, ...weeklyGoa
 const yearStats = computed(() => calcStats(yearlyGoals.value));
 
 const donutBg = (stats: { total: number; done: number; inProgress: number }) => {
-  if (stats.total === 0) return '#e2e8f0';
+  const trackColor = isDark.value ? '#334155' : '#e2e8f0';
+  if (stats.total === 0) return trackColor;
   const doneP = (stats.done / stats.total) * 100;
   const ipP = (stats.inProgress / stats.total) * 100;
-  return `conic-gradient(#10b981 0% ${doneP}%, #8b5cf6 ${doneP}% ${doneP + ipP}%, #e2e8f0 ${doneP + ipP}% 100%)`;
+  return `conic-gradient(#10b981 0% ${doneP}%, #8b5cf6 ${doneP}% ${doneP + ipP}%, ${trackColor} ${doneP + ipP}% 100%)`;
 };
 
 const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
@@ -361,7 +364,7 @@ const deleteGoal = async (id: string) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50">
+  <div class="min-h-screen bg-slate-50 dark:bg-slate-900">
     <div v-if="session" class="pb-20">
       <!-- Header -->
       <header class="max-w-7xl mx-auto px-6 pt-6 sm:pt-8 pb-5">
@@ -371,23 +374,32 @@ const deleteGoal = async (id: string) => {
               <div class="bg-primary p-1.5 rounded-lg shadow-lg shadow-primary/30 text-white">
                 <Target :size="20" />
               </div>
-              <h1 class="text-3xl font-black text-slate-900 tracking-tighter">goalr.</h1>
+              <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter">goalr.</h1>
             </div>
-            <p class="text-slate-500 font-medium text-sm">Design your future, step by step.</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Design your future, step by step.</p>
           </div>
 
           <div class="flex items-center gap-3">
             <button
               @click="openAddModal"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-200 dark:shadow-emerald-900/20 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Plus :size="16" />
               Add Goal
             </button>
 
             <button
+              @click="toggleDark"
+              class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <Sun v-if="isDark" :size="16" />
+              <Moon v-else :size="16" />
+            </button>
+
+            <button
               @click="handleSignOut"
-              class="bg-white hover:bg-slate-50 text-slate-500 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="Sign out"
             >
               <LogOut :size="16" />
@@ -404,8 +416,8 @@ const deleteGoal = async (id: string) => {
             class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary"
             :class="[
               currentView === view.id
-                ? 'text-emerald-600 bg-emerald-50/50'
-                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/50'
+                ? 'text-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/50'
+                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'
             ]"
           >
             <component :is="view.icon" :size="14" />
@@ -418,31 +430,31 @@ const deleteGoal = async (id: string) => {
       <main v-if="isLoading" class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
           <div class="xl:col-span-3 space-y-3">
-            <div class="h-6 w-40 bg-slate-200 rounded animate-pulse mb-3"></div>
-            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-4 space-y-4">
+            <div class="h-6 w-40 bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-3"></div>
+            <div class="bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-4 space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                <div v-for="i in 3" :key="i" class="bg-white rounded-lg p-3.5 space-y-2">
-                  <div class="h-4 bg-slate-200 rounded animate-pulse w-3/4"></div>
-                  <div class="h-3 bg-slate-100 rounded animate-pulse w-1/2"></div>
+                <div v-for="i in 3" :key="i" class="bg-white dark:bg-slate-800 rounded-lg p-3.5 space-y-2">
+                  <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
+                  <div class="h-3 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse w-1/2"></div>
                 </div>
               </div>
-              <div v-for="w in 2" :key="w" class="bg-white rounded-lg p-3">
-                <div class="h-3 bg-slate-200 rounded animate-pulse w-16 mb-2"></div>
+              <div v-for="w in 2" :key="w" class="bg-white dark:bg-slate-800 rounded-lg p-3">
+                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-16 mb-2"></div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                  <div v-for="j in 2" :key="j" class="bg-slate-50 rounded-lg p-3.5 space-y-2">
-                    <div class="h-4 bg-slate-200 rounded animate-pulse w-2/3"></div>
-                    <div class="h-3 bg-slate-100 rounded animate-pulse w-1/3"></div>
+                  <div v-for="j in 2" :key="j" class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3.5 space-y-2">
+                    <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-2/3"></div>
+                    <div class="h-3 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse w-1/3"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="xl:col-span-1">
-            <div class="h-6 w-28 bg-slate-200 rounded animate-pulse mb-3"></div>
-            <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 p-3 space-y-2">
-              <div v-for="i in 2" :key="i" class="bg-white rounded-lg p-3.5 space-y-2">
-                <div class="h-4 bg-slate-200 rounded animate-pulse w-3/4"></div>
-                <div class="h-3 bg-slate-100 rounded animate-pulse w-1/2"></div>
+            <div class="h-6 w-28 bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-3"></div>
+            <div class="bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-3 space-y-2">
+              <div v-for="i in 2" :key="i" class="bg-white dark:bg-slate-800 rounded-lg p-3.5 space-y-2">
+                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
+                <div class="h-3 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse w-1/2"></div>
               </div>
             </div>
           </div>
@@ -452,13 +464,13 @@ const deleteGoal = async (id: string) => {
       <!-- Backlog (flat grid) -->
       <main v-else-if="currentView === 'backlog'" class="max-w-7xl mx-auto px-6">
         <div class="mb-4">
-          <h2 class="text-lg font-bold text-slate-800">Backlog</h2>
-          <p class="text-xs text-slate-500 mt-0.5">Ideas and goals waiting to be started.</p>
+          <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">Backlog</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Ideas and goals waiting to be started.</p>
         </div>
 
         <div v-if="backlogGoals.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
-          <Inbox :size="32" class="text-slate-300 mb-2" />
-          <p class="text-sm text-slate-400 font-medium">Backlog is empty. Great job planning!</p>
+          <Inbox :size="32" class="text-slate-300 dark:text-slate-600 mb-2" />
+          <p class="text-sm text-slate-400 dark:text-slate-500 font-medium">Backlog is empty. Great job planning!</p>
         </div>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -480,40 +492,40 @@ const deleteGoal = async (id: string) => {
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
           <div class="xl:col-span-3 space-y-3">
              <div class="flex items-center gap-2 mb-3">
-                <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
+                <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-slate-800">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
-                <button @click="navigateMonth(1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Next month">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
+                <button @click="navigateMonth(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Next month">
                   <ChevronRight :size="18" />
                 </button>
                 <button
                   v-if="!isCurrentMonth"
                   @click="goToToday"
-                  class="ml-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md hover:bg-emerald-100 transition-colors"
+                  class="ml-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-1 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-950 transition-colors"
                 >
                   Today
                 </button>
              </div>
 
-             <div class="bg-slate-100/50 rounded-xl border border-slate-200/50 flex flex-col gap-5">
+             <div class="bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 flex flex-col gap-5">
                <!-- Month Stats Bar -->
-               <div v-if="monthStats.total > 0" class="flex items-center gap-3 mx-4 mt-4 px-3 py-2 bg-white/60 rounded-lg border border-slate-100">
+               <div v-if="monthStats.total > 0" class="flex items-center gap-3 mx-4 mt-4 px-3 py-2 bg-white/60 dark:bg-slate-800/60 rounded-lg border border-slate-100 dark:border-slate-700">
                  <div class="relative w-8 h-8 rounded-full shrink-0 transition-all duration-500" :style="{ background: donutBg(monthStats) }">
-                   <div class="absolute inset-[5px] rounded-full bg-white/90"></div>
-                   <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-slate-600">{{ monthStats.pct }}</span>
+                   <div class="absolute inset-[5px] rounded-full bg-white/90 dark:bg-slate-800/90"></div>
+                   <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-slate-600 dark:text-slate-300">{{ monthStats.pct }}</span>
                  </div>
-                 <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400 flex-wrap">
+                 <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400 dark:text-slate-500 flex-wrap">
                    <span>{{ monthStats.total }} total</span>
-                   <span class="text-slate-200">&middot;</span>
+                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
                    <span class="text-emerald-600">{{ monthStats.done }} done</span>
-                   <span class="text-slate-200">&middot;</span>
-                   <span class="text-violet-600">{{ monthStats.inProgress }} in progress</span>
-                   <span class="text-slate-200">&middot;</span>
+                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
+                   <span class="text-violet-600 dark:text-violet-400">{{ monthStats.inProgress }} in progress</span>
+                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
                    <span class="text-blue-600">{{ monthStats.toDo }} to-do</span>
                  </div>
                  <div class="ml-auto flex items-center gap-2 shrink-0">
-                   <div class="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                   <div class="w-20 h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                      <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: monthStats.pct + '%' }"></div>
                    </div>
                    <span class="text-[11px] font-semibold text-emerald-600">{{ monthStats.pct }}%</span>
@@ -555,35 +567,35 @@ const deleteGoal = async (id: string) => {
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
           <div class="xl:col-span-1 space-y-3">
               <div class="flex items-center gap-2 mb-3">
-                <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Previous year">
+                <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Previous year">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-slate-800">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
-                <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors text-slate-400" aria-label="Next year">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
+                <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Next year">
                   <ChevronRight :size="18" />
                 </button>
                 <button
                   v-if="!isCurrentYear"
                   @click="goToToday"
-                  class="ml-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md hover:bg-indigo-100 transition-colors"
+                  class="ml-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-1 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-950 transition-colors"
                 >
                   Today
                 </button>
               </div>
 
              <!-- Year Stats Bar -->
-             <div v-if="yearStats.total > 0" class="flex items-center gap-2.5 px-3 py-2 bg-slate-100/50 rounded-lg border border-slate-200/50 mb-1">
+             <div v-if="yearStats.total > 0" class="flex items-center gap-2.5 px-3 py-2 bg-slate-100/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50 mb-1">
                <div class="relative w-7 h-7 rounded-full shrink-0 transition-all duration-500" :style="{ background: donutBg(yearStats) }">
-                 <div class="absolute inset-[5px] rounded-full bg-white/90"></div>
-                 <span class="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-slate-600">{{ yearStats.pct }}</span>
+                 <div class="absolute inset-[5px] rounded-full bg-white/90 dark:bg-slate-800/90"></div>
+                 <span class="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-slate-600 dark:text-slate-300">{{ yearStats.pct }}</span>
                </div>
                <div class="flex flex-col gap-1 flex-1 min-w-0">
-                 <div class="flex items-center gap-1.5 text-[10px] font-medium text-slate-400 flex-wrap">
-                   <span class="text-emerald-600">{{ yearStats.done }}<span class="text-slate-300">/</span>{{ yearStats.total }}</span>
-                   <span class="text-slate-200">&middot;</span>
-                   <span class="text-violet-500">{{ yearStats.inProgress }} wip</span>
+                 <div class="flex items-center gap-1.5 text-[10px] font-medium text-slate-400 dark:text-slate-500 flex-wrap">
+                   <span class="text-emerald-600">{{ yearStats.done }}<span class="text-slate-300 dark:text-slate-600">/</span>{{ yearStats.total }}</span>
+                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
+                   <span class="text-violet-500 dark:text-violet-400">{{ yearStats.inProgress }} wip</span>
                  </div>
-                 <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                 <div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                    <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: yearStats.pct + '%' }"></div>
                  </div>
                </div>

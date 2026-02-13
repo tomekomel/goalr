@@ -39,10 +39,10 @@ onUnmounted(() => {
 });
 
 const statusConfig: Record<string, { icon: any, color: string, bg: string, barColor?: string }> = {
-  'planned': { icon: Circle, color: 'text-slate-500', bg: 'bg-slate-100' },
-  'to-do': { icon: CircleDashed, color: 'text-blue-600', bg: 'bg-blue-50' },
-  'in-progress': { icon: Timer, color: 'text-violet-600', bg: 'bg-violet-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
-  'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
+  'planned': { icon: Circle, color: 'text-slate-500', bg: 'bg-slate-100 dark:bg-slate-700' },
+  'to-do': { icon: CircleDashed, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/50' },
+  'in-progress': { icon: Timer, color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-950/50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
+  'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
 };
 
 const getStatusConfig = (status: string) => {
@@ -53,11 +53,11 @@ const formatStatus = (s: string) => s.split('-').join(' ');
 </script>
 
 <template>
-  <div class="bg-white px-3.5 py-3 rounded-lg card-shadow border border-slate-100 group relative hover:border-slate-200 transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
+  <div class="bg-white dark:bg-slate-800 px-3.5 py-3 rounded-lg card-shadow border border-slate-100 dark:border-slate-700 group relative hover:border-slate-200 dark:hover:border-slate-600 transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
     <!-- Header: Title + Drag Handle -->
     <div class="flex items-center gap-1.5 mb-1.5">
-      <h3 class="font-semibold text-slate-800 leading-tight text-sm">{{ goal.title }}</h3>
-      <GripVertical :size="14" class="text-slate-300 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <h3 class="font-semibold text-slate-800 dark:text-slate-200 leading-tight text-sm">{{ goal.title }}</h3>
+      <GripVertical :size="14" class="text-slate-300 dark:text-slate-600 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
 
     <!-- Meta: Status & Actions -->
@@ -84,7 +84,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
           </button>
           <button
             @click="cancelDelete"
-            class="text-slate-400 hover:text-slate-600 transition-colors p-1"
+            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
             aria-label="Cancel delete"
           >
             <X :size="12" />
@@ -94,21 +94,21 @@ const formatStatus = (s: string) => s.split('-').join(' ');
           <button
             v-if="goal.status === 'planned'"
             @click="$emit('start', goal.id)"
-            class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded transition-colors"
+            class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-950 px-1.5 py-0.5 rounded transition-colors"
             aria-label="Start goal"
           >
             Start
           </button>
           <button
             @click="$emit('edit', goal)"
-            class="text-slate-300 hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
+            class="text-slate-300 dark:text-slate-600 hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
             aria-label="Edit goal"
           >
             <Pencil :size="12" />
           </button>
           <button
             @click="startDelete"
-            class="text-slate-300 hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
+            class="text-slate-300 dark:text-slate-600 hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
             aria-label="Delete goal"
           >
             <Trash2 :size="12" />
@@ -118,12 +118,12 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     </div>
 
     <!-- Description -->
-    <p v-if="goal.description" class="text-slate-500 text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
+    <p v-if="goal.description" class="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
 
     <!-- Footer: Date -->
     <div class="flex items-center gap-1.5 pt-2 mt-auto">
-      <div class="h-1 w-1 rounded-full bg-slate-200"></div>
-      <span class="text-[10px] uppercase tracking-wider font-medium text-slate-400">
+      <div class="h-1 w-1 rounded-full bg-slate-200 dark:bg-slate-600"></div>
+      <span class="text-[10px] uppercase tracking-wider font-medium text-slate-400 dark:text-slate-500">
         {{ new Date(goal.createdAt).toLocaleDateString('en-GB') }}
       </span>
     </div>

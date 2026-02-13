@@ -127,10 +127,10 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity" @click="$emit('close')"></div>
 
-    <div class="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 animate-in fade-in zoom-in duration-200">
+    <div class="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-8 border border-slate-100 dark:border-slate-700 animate-in fade-in zoom-in duration-200">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-slate-800">{{ goal ? 'Edit Goal' : 'New Goal' }}</h2>
-        <button @click="$emit('close')" class="text-slate-400 hover:text-slate-600 transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" aria-label="Close modal">
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-200">{{ goal ? 'Edit Goal' : 'New Goal' }}</h2>
+        <button @click="$emit('close')" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" aria-label="Close modal">
           <X :size="24" />
         </button>
       </div>
@@ -138,12 +138,12 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Title -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Goal Title</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Goal Title</label>
           <input
             v-model="form.title"
             type="text"
             placeholder="What do you want to achieve?"
-            class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+            class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-slate-100 dark:placeholder-slate-500"
             required
             autoFocus
           />
@@ -151,19 +151,19 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
         <!-- Description -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2">Description (optional)</label>
+          <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Description (optional)</label>
           <textarea
             v-model="form.description"
             rows="3"
             placeholder="Add more details..."
-            class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+            class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all dark:text-slate-100 dark:placeholder-slate-500 resize-none"
           ></textarea>
         </div>
 
         <!-- Progress Slider (Only for In-Progress) -->
         <div v-if="form.status === 'in-progress'" class="animate-in slide-in-from-top-2 fade-in duration-300">
            <div class="flex justify-between items-center mb-3">
-            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Current Progress</label>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Current Progress</label>
             <span class="text-xs font-black text-emerald-600">{{ form.progress }}%</span>
            </div>
            <div class="relative flex items-center h-4">
@@ -173,7 +173,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                 min="0" 
                 max="100" 
                 step="5"
-                class="w-full h-1 bg-slate-100 rounded-full appearance-none cursor-pointer accent-emerald-500 custom-slider"
+                class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-emerald-500 custom-slider"
              />
            </div>
         </div>
@@ -182,7 +182,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
         <div class="grid grid-cols-1 gap-6">
           <!-- Period -->
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Period</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Period</label>
             <div class="grid grid-cols-3 gap-2">
               <button
                 v-for="p in periods"
@@ -193,7 +193,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   'py-2 px-1 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border cursor-pointer',
                   form.period === p
                     ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                    : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                 ]"
               >
                 {{ p }}
@@ -203,7 +203,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
           <!-- Status -->
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Status</label>
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="s in statuses"
@@ -214,7 +214,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   'cursor-pointer py-1.5 px-3 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border shadow-sm',
                   form.status === s
                     ? statusColors[s]
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                    : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                 ]"
               >
                 {{ formatStatus(s) }}
@@ -226,7 +226,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
         <!-- Date Context (Week / Month / Year) -->
         <div class="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
           <div v-if="form.period === 'weekly'">
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Week Number</label>
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Week Number</label>
             <div class="grid grid-cols-4 gap-2">
               <button
                 v-for="w in 4"
@@ -237,7 +237,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   'py-2 rounded-lg text-xs font-bold transition-all border cursor-pointer',
                   form.weekNumber === w
                     ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                    : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                    : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
                 ]"
               >
                 Week {{ w }}
@@ -246,18 +246,18 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">
+            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
               {{ form.period === 'yearly' ? 'Select Year' : 'Select Month & Year' }}
             </label>
             
-            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+            <div class="bg-slate-50 dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
               <!-- Year Selector -->
               <div class="flex items-center justify-between mb-4 px-2">
-                <button type="button" @click="changeYear(-1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer text-slate-400">
+                <button type="button" @click="changeYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer text-slate-400">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
-                <span class="font-bold text-slate-700 text-lg">{{ form.targetDate.substring(0, 4) }}</span>
-                <button type="button" @click="changeYear(1)" class="p-1 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer text-slate-400">
+                <span class="font-bold text-slate-700 dark:text-slate-300 text-lg">{{ form.targetDate.substring(0, 4) }}</span>
+                <button type="button" @click="changeYear(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer text-slate-400">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </button>
               </div>
@@ -273,7 +273,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                     'py-2 rounded-lg text-[11px] font-bold uppercase tracking-tighter transition-all border cursor-pointer',
                     currentMonthIndex === index
                       ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                      : 'bg-white text-slate-400 border-slate-100 hover:border-slate-200 hover:text-slate-600'
+                      : 'bg-white dark:bg-slate-800 text-slate-400 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:text-slate-600 dark:hover:text-slate-300'
                   ]"
                 >
                   {{ month }}
@@ -285,7 +285,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
         <button
           type="submit"
-          class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-colors shadow-xl shadow-emerald-200 mt-2"
+          class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold hover:bg-emerald-700 transition-colors shadow-xl shadow-emerald-200 dark:shadow-emerald-900/20 mt-2"
         >
           {{ goal ? 'Save Changes' : 'Add Goal' }}
         </button>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-background: #f8fafc;
   --color-card: #ffffff;
@@ -11,7 +13,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100;
   }
 
   button {
@@ -21,6 +23,10 @@
 
 .column-gradient {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+:where(.dark, .dark *) .column-gradient {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(30, 41, 59, 0) 100%);
 }
 
 .card-shadow {
@@ -33,11 +39,24 @@
   transform: translateY(-2px);
 }
 
+:where(.dark, .dark *) .card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+:where(.dark, .dark *) .card-shadow:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+}
+
 .ghost-card {
   opacity: 0.5;
   background: #f1f5f9;
   border: 2px dashed #cbd5e1;
   cursor: grabbing;
+}
+
+:where(.dark, .dark *) .ghost-card {
+  background: #1e293b;
+  border-color: #475569;
 }
 
 /* Custom Slider Thumb */
@@ -67,4 +86,14 @@
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+:where(.dark, .dark *) .custom-slider::-webkit-slider-thumb {
+  background: #1e293b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+:where(.dark, .dark *) .custom-slider::-moz-range-thumb {
+  background: #1e293b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
