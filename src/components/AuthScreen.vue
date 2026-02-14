@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import { supabase } from '../supabase';
 import { Target } from 'lucide-vue-next';
+import { useI18n } from '../composables/useI18n';
+
+const { t } = useI18n();
 
 const isLoading = ref(false);
 
@@ -35,19 +38,19 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
           </div>
         </div>
         <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter mb-2">goalr.</h1>
-        <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Design your future, step by step.</p>
+        <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">{{ t('auth.tagline') }}</p>
       </div>
 
       <!-- Actions -->
       <div class="flex flex-col items-center gap-6">
-        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Sign in with</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{{ t('auth.signInWith') }}</p>
         
         <div class="flex items-center justify-center gap-4 w-full">
           <!-- Google -->
           <button
             @click="handleLogin('google')"
             :disabled="isLoading"
-            aria-label="Continue with Google"
+            :aria-label="t('auth.continueGoogle')"
             class="group relative flex items-center justify-center w-16 h-16 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
           >
             <svg class="w-6 h-6 transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -62,7 +65,7 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
           <button
             @click="handleLogin('facebook')"
             :disabled="isLoading"
-            aria-label="Continue with Facebook"
+            :aria-label="t('auth.continueFacebook')"
             class="group relative flex items-center justify-center w-16 h-16 bg-[#1877F2] text-white rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-500/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
           >
             <svg class="w-7 h-7 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -74,7 +77,7 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
           <button
             @click="handleLogin('twitter')"
             :disabled="isLoading"
-            aria-label="Continue with X"
+            :aria-label="t('auth.continueX')"
             class="group relative flex items-center justify-center w-16 h-16 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl transition-all hover:scale-105 hover:shadow-xl hover:shadow-slate-900/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary"
           >
             <svg class="w-5 h-5 fill-current transition-transform group-hover:scale-110" viewBox="0 0 24 24">
@@ -87,7 +90,7 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
       <!-- Footer -->
       <div class="mt-10 text-center">
         <p class="text-xs text-slate-500 dark:text-slate-400 font-medium px-4 leading-relaxed">
-          By continuing, you agree to our Terms of Service and Privacy Policy.
+          {{ t('auth.legal') }}
         </p>
       </div>
     </div>

@@ -4,6 +4,9 @@ import draggable from 'vuedraggable';
 import { Target, Inbox } from 'lucide-vue-next';
 import type { Goal, GoalPeriod } from '../types';
 import GoalCard from './GoalCard.vue';
+import { useI18n } from '../composables/useI18n';
+
+const { t } = useI18n();
 
 const props = withDefaults(defineProps<{
   title: string;
@@ -69,7 +72,7 @@ const gridClasses = {
       <h2 class="font-semibold text-sm flex items-center gap-1.5" :class="headerClasses[variant]">
         <Target v-if="variant === 'highlight'" :size="16" class="text-emerald-600" />
         {{ title }}
-        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded-full">Current</span>
+        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded-full">{{ t('column.current') }}</span>
       </h2>
       <span class="bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-400 border border-slate-200 dark:border-slate-700">
         {{ localGoals.length }}

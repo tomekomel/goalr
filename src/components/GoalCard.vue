@@ -2,6 +2,9 @@
 import { ref, onUnmounted } from 'vue';
 import type { Goal } from '../types';
 import { Trash2, Pencil, Circle, CircleDashed, Timer, CheckCircle2, GripVertical, X } from 'lucide-vue-next';
+import { useI18n } from '../composables/useI18n';
+
+const { t, localeCode } = useI18n();
 
 const props = defineProps<{
   goal: Goal;
@@ -49,7 +52,7 @@ const getStatusConfig = (status: string) => {
   return (statusConfig[status] || statusConfig['planned'])!;
 };
 
-const formatStatus = (s: string) => s.split('-').join(' ');
+const formatStatus = (s: string) => t(`card.status.${s}`);
 </script>
 
 <template>
@@ -78,14 +81,14 @@ const formatStatus = (s: string) => s.split('-').join(' ');
           <button
             @click="confirmDelete"
             class="text-xs font-bold text-white bg-red-500 hover:bg-red-600 px-2 py-0.5 rounded-md transition-colors"
-            aria-label="Confirm delete"
+            :aria-label="t('card.confirmDelete')"
           >
-            Delete?
+            {{ t('card.confirmDelete') }}
           </button>
           <button
             @click="cancelDelete"
             class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
-            aria-label="Cancel delete"
+            :aria-label="t('card.cancelDelete')"
           >
             <X :size="12" />
           </button>
@@ -95,21 +98,21 @@ const formatStatus = (s: string) => s.split('-').join(' ');
             v-if="goal.status === 'planned'"
             @click="$emit('start', goal.id)"
             class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-950 px-1.5 py-0.5 rounded transition-colors"
-            aria-label="Start goal"
+            :aria-label="t('card.start')"
           >
-            Start
+            {{ t('card.start') }}
           </button>
           <button
             @click="$emit('edit', goal)"
             class="text-slate-300 dark:text-slate-600 hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
-            aria-label="Edit goal"
+            :aria-label="t('card.editGoal')"
           >
             <Pencil :size="12" />
           </button>
           <button
             @click="startDelete"
             class="text-slate-300 dark:text-slate-600 hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
-            aria-label="Delete goal"
+            :aria-label="t('card.deleteGoal')"
           >
             <Trash2 :size="12" />
           </button>
@@ -124,7 +127,7 @@ const formatStatus = (s: string) => s.split('-').join(' ');
     <div class="flex items-center gap-1.5 pt-2 mt-auto">
       <div class="h-1 w-1 rounded-full bg-slate-200 dark:bg-slate-600"></div>
       <span class="text-[10px] uppercase tracking-wider font-medium text-slate-400 dark:text-slate-500">
-        {{ new Date(goal.createdAt).toLocaleDateString('en-GB') }}
+        {{ new Date(goal.createdAt).toLocaleDateString(localeCode) }}
       </span>
     </div>
 

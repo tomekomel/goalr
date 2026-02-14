@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, ChevronsRight, Inbox, Moon, Sun } from 'lucide-vue-next';
 import { useDarkMode } from './composables/useDarkMode';
+import { useI18n } from './composables/useI18n';
 import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
 import type { Goal, GoalPeriod, GoalStatus } from './types';
@@ -11,6 +12,7 @@ import GoalModal from './components/GoalModal.vue';
 import AuthScreen from './components/AuthScreen.vue';
 
 const { isDark, toggle: toggleDark } = useDarkMode();
+const { t, locale, localeCode, toggleLocale } = useI18n();
 const session = ref<Session | null>(null);
 
 // Toast notifications
@@ -34,10 +36,10 @@ const editingGoal = ref<Goal | null>(null);
 type ViewType = 'dashboard' | 'backlog';
 const currentView = ref<ViewType>('dashboard');
 
-const views = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'backlog', label: 'Backlog', icon: ListTodo },
-];
+const views = computed(() => [
+  { id: 'dashboard', label: t('app.dashboard'), icon: LayoutDashboard },
+  { id: 'backlog', label: t('app.backlog'), icon: ListTodo },
+]);
 
 const showYearlyColumn = ref(localStorage.getItem('showYearlyColumn') !== 'false');
 const toggleYearlyColumn = () => {
@@ -49,7 +51,7 @@ const goals = ref<Goal[]>([]);
 const isLoading = ref(true);
 const currentDate = ref(new Date());
 
-const currentMonthName = computed(() => currentDate.value.toLocaleString('default', { month: 'long' }));
+const currentMonthName = computed(() => currentDate.value.toLocaleString(localeCode.value, { month: 'long' }));
 const currentYear = computed(() => currentDate.value.getFullYear());
 
 const isCurrentMonth = computed(() => {
@@ -97,7 +99,7 @@ const fetchGoals = async () => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    showError('Failed to load goals. Please try refreshing the page.');
+    showError(t('app.errorLoad'));
     isLoading.value = false;
     return;
   }
@@ -188,9 +190,9 @@ const yearlyGoals = computed(() => {
 });
 
 const emptyMessages = computed(() => ({
-  monthly: 'No monthly goals. Add one or move from Backlog.',
-  weekly: 'No goals this week.',
-  yearly: 'No yearly goals yet.',
+  monthly: t('app.emptyMonthly'),
+  weekly: t('app.emptyWeekly'),
+  yearly: t('app.emptyYearly'),
 }));
 
 const backlogGoals = computed(() => goals.value.filter(g => g.status === 'planned'));
@@ -261,7 +263,7 @@ const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number },
 
   const failed = results.filter(r => r.error);
   if (failed.length > 0) {
-    showError(`Failed to update ${failed.length} goal(s). Changes may not be saved.`);
+    showError(t('app.errorUpdate', failed.length));
   }
 };
 
@@ -316,14 +318,14 @@ const saveGoal = async (goalData: {
     
     const { error } = await supabase.from('goals').update(payload).eq('id', goalData.id);
     if (error) {
-      showError('Failed to update goal. Please try again.');
+      showError(t('app.errorUpdateGoal'));
       await fetchGoals();
     }
   } else {
     // Insert
     const { data, error } = await supabase.from('goals').insert(payload).select().single();
     if (error) {
-      showError('Failed to create goal. Please try again.');
+      showError(t('app.errorCreate'));
       return;
     }
     if (data) {
@@ -354,7 +356,7 @@ const startGoal = async (id: string) => {
   const { error } = await supabase.from('goals').update({ status: 'to-do', updated_at: new Date().toISOString() }).eq('id', id);
   if (error) {
     goal.status = 'planned';
-    showError('Failed to start goal. Please try again.');
+    showError(t('app.errorStart'));
   }
 };
 
@@ -364,7 +366,7 @@ const deleteGoal = async (id: string) => {
   const { error } = await supabase.from('goals').delete().eq('id', id);
   if (error) {
     goals.value = previousGoals;
-    showError('Failed to delete goal. Please try again.');
+    showError(t('app.errorDelete'));
   }
 };
 </script>
@@ -382,7 +384,7 @@ const deleteGoal = async (id: string) => {
               </div>
               <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter">goalr.</h1>
             </div>
-            <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Design your future, step by step.</p>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">{{ t('app.tagline') }}</p>
           </div>
 
           <div class="flex items-center gap-3">
@@ -391,22 +393,30 @@ const deleteGoal = async (id: string) => {
               class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-200 dark:shadow-emerald-900/20 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Plus :size="16" />
-              Add Goal
+              {{ t('app.addGoal') }}
             </button>
 
             <button
               @click="toggleDark"
               class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
-              :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+              :aria-label="isDark ? t('app.switchToLight') : t('app.switchToDark')"
             >
               <Sun v-if="isDark" :size="16" />
               <Moon v-else :size="16" />
             </button>
 
             <button
+              @click="toggleLocale"
+              class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label="Toggle language"
+            >
+              <span class="text-xs font-bold">{{ locale === 'en' ? 'EN' : 'PL' }}</span>
+            </button>
+
+            <button
               @click="handleSignOut"
               class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
-              aria-label="Sign out"
+              :aria-label="t('app.signOut')"
             >
               <LogOut :size="16" />
             </button>
@@ -470,13 +480,13 @@ const deleteGoal = async (id: string) => {
       <!-- Backlog (flat grid) -->
       <main v-else-if="currentView === 'backlog'" class="max-w-7xl mx-auto px-6">
         <div class="mb-4">
-          <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">Backlog</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Ideas and goals waiting to be started.</p>
+          <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ t('app.backlogTitle') }}</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ t('app.backlogDesc') }}</p>
         </div>
 
         <div v-if="backlogGoals.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
           <Inbox :size="32" class="text-slate-300 dark:text-slate-600 mb-2" />
-          <p class="text-sm text-slate-400 dark:text-slate-500 font-medium">Backlog is empty. Great job planning!</p>
+          <p class="text-sm text-slate-400 dark:text-slate-500 font-medium">{{ t('app.backlogEmpty') }}</p>
         </div>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -498,11 +508,11 @@ const deleteGoal = async (id: string) => {
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
           <div class="space-y-3" :class="showYearlyColumn ? 'xl:col-span-3' : 'xl:col-span-1'">
              <div class="flex items-center gap-2 mb-3">
-                <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
+                <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.prevMonth')">
                   <ChevronLeft :size="18" />
                 </button>
                 <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
-                <button @click="navigateMonth(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Next month">
+                <button @click="navigateMonth(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.nextMonth')">
                   <ChevronRight :size="18" />
                 </button>
                 <button
@@ -510,7 +520,7 @@ const deleteGoal = async (id: string) => {
                   @click="goToToday"
                   class="ml-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-1 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-950 transition-colors"
                 >
-                  Today
+                  {{ t('app.today') }}
                 </button>
              </div>
 
@@ -522,13 +532,13 @@ const deleteGoal = async (id: string) => {
                    <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-slate-600 dark:text-slate-300">{{ monthStats.pct }}</span>
                  </div>
                  <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400 dark:text-slate-500 flex-wrap">
-                   <span>{{ monthStats.total }} total</span>
+                   <span>{{ monthStats.total }} {{ t('app.total') }}</span>
                    <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-emerald-600">{{ monthStats.done }} done</span>
+                   <span class="text-emerald-600">{{ monthStats.done }} {{ t('app.done') }}</span>
                    <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-violet-600 dark:text-violet-400">{{ monthStats.inProgress }} in progress</span>
+                   <span class="text-violet-600 dark:text-violet-400">{{ monthStats.inProgress }} {{ t('app.inProgress') }}</span>
                    <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-blue-600">{{ monthStats.toDo }} to-do</span>
+                   <span class="text-blue-600">{{ monthStats.toDo }} {{ t('app.toDo') }}</span>
                  </div>
                  <div class="ml-auto flex items-center gap-2 shrink-0">
                    <div class="w-20 h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -540,7 +550,7 @@ const deleteGoal = async (id: string) => {
 
                <!-- Row 1: Monthly Goals -->
                <GoalColumn
-                  title="Monthly Focus"
+                  :title="t('app.monthlyFocus')"
                   period="monthly"
                   :goals="monthlyGoals"
                   variant="highlight"
@@ -556,7 +566,7 @@ const deleteGoal = async (id: string) => {
                   <GoalColumn
                     v-for="week in 4"
                     :key="week"
-                    :title="`Week ${week}`"
+                    :title="t('app.week', week)"
                     period="weekly"
                     variant="compact"
                     :goals="getWeekGoals(week)"
@@ -573,11 +583,11 @@ const deleteGoal = async (id: string) => {
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
           <div v-if="showYearlyColumn" class="xl:col-span-1 space-y-3">
               <div class="flex items-center gap-2 mb-3">
-                <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Previous year">
+                <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.prevYear')">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">Year: <span class="text-indigo-600">{{ currentYear }}</span></h2>
-                <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Next year">
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ t('app.yearLabel') }} <span class="text-indigo-600">{{ currentYear }}</span></h2>
+                <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.nextYear')">
                   <ChevronRight :size="18" />
                 </button>
                 <button
@@ -585,12 +595,12 @@ const deleteGoal = async (id: string) => {
                   @click="goToToday"
                   class="ml-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-1 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-950 transition-colors"
                 >
-                  Today
+                  {{ t('app.today') }}
                 </button>
                 <button
                   @click="toggleYearlyColumn"
                   class="ml-auto p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                  aria-label="Collapse yearly column"
+                  :aria-label="t('app.collapseYearly')"
                 >
                   <ChevronsRight :size="16" />
                 </button>
@@ -606,7 +616,7 @@ const deleteGoal = async (id: string) => {
                  <div class="flex items-center gap-1.5 text-[10px] font-medium text-slate-400 dark:text-slate-500 flex-wrap">
                    <span class="text-emerald-600">{{ yearStats.done }}<span class="text-slate-300 dark:text-slate-600">/</span>{{ yearStats.total }}</span>
                    <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-violet-500 dark:text-violet-400">{{ yearStats.inProgress }} wip</span>
+                   <span class="text-violet-500 dark:text-violet-400">{{ yearStats.inProgress }} {{ t('app.wip') }}</span>
                  </div>
                  <div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                    <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: yearStats.pct + '%' }"></div>
@@ -615,7 +625,7 @@ const deleteGoal = async (id: string) => {
              </div>
 
              <GoalColumn
-                title="Yearly Goals"
+                :title="t('app.yearlyGoals')"
                 period="yearly"
                 :goals="yearlyGoals"
                 :empty-message="emptyMessages.yearly"
@@ -632,7 +642,7 @@ const deleteGoal = async (id: string) => {
             class="hidden xl:flex flex-col items-center gap-3 pt-3 w-10 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 rounded-xl cursor-pointer hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
           >
             <ChevronLeft :size="16" class="text-slate-400 shrink-0" />
-            <span class="text-xs font-semibold text-slate-400 [writing-mode:vertical-lr]">Yearly</span>
+            <span class="text-xs font-semibold text-slate-400 [writing-mode:vertical-lr]">{{ t('app.yearly') }}</span>
           </div>
 
         </div>
@@ -657,7 +667,7 @@ const deleteGoal = async (id: string) => {
         class="flex items-center gap-3 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-in slide-in-from-right fade-in duration-300"
       >
         <span class="flex-1">{{ toast.message }}</span>
-        <button @click="dismissToast(toast.id)" class="text-white/70 hover:text-white transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-white rounded" aria-label="Dismiss notification">
+        <button @click="dismissToast(toast.id)" class="text-white/70 hover:text-white transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-white rounded" :aria-label="t('app.dismissNotification')">
           <X :size="16" />
         </button>
       </div>
