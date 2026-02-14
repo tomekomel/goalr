@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 .env
+PRODUCT_ANALYSIS.md
