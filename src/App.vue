@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, Inbox, Moon, Sun } from 'lucide-vue-next';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, ChevronsRight, Inbox, Moon, Sun } from 'lucide-vue-next';
 import { useDarkMode } from './composables/useDarkMode';
 import { supabase } from './supabase';
 import type { Session } from '@supabase/supabase-js';
@@ -38,6 +38,12 @@ const views = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'backlog', label: 'Backlog', icon: ListTodo },
 ];
+
+const showYearlyColumn = ref(localStorage.getItem('showYearlyColumn') !== 'false');
+const toggleYearlyColumn = () => {
+  showYearlyColumn.value = !showYearlyColumn.value;
+  localStorage.setItem('showYearlyColumn', String(showYearlyColumn.value));
+};
 
 const goals = ref<Goal[]>([]);
 const isLoading = ref(true);
@@ -487,10 +493,10 @@ const deleteGoal = async (id: string) => {
 
       <!-- Dashboard Board -->
       <main v-else class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 gap-6" :class="showYearlyColumn ? 'xl:grid-cols-4' : 'xl:grid-cols-[1fr_auto]'">
 
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
-          <div class="xl:col-span-3 space-y-3">
+          <div class="space-y-3" :class="showYearlyColumn ? 'xl:col-span-3' : 'xl:col-span-1'">
              <div class="flex items-center gap-2 mb-3">
                 <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Previous month">
                   <ChevronLeft :size="18" />
@@ -565,7 +571,7 @@ const deleteGoal = async (id: string) => {
           </div>
 
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
-          <div class="xl:col-span-1 space-y-3">
+          <div v-if="showYearlyColumn" class="xl:col-span-1 space-y-3">
               <div class="flex items-center gap-2 mb-3">
                 <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" aria-label="Previous year">
                   <ChevronLeft :size="18" />
@@ -580,6 +586,13 @@ const deleteGoal = async (id: string) => {
                   class="ml-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-1 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-950 transition-colors"
                 >
                   Today
+                </button>
+                <button
+                  @click="toggleYearlyColumn"
+                  class="ml-auto p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  aria-label="Collapse yearly column"
+                >
+                  <ChevronsRight :size="16" />
                 </button>
               </div>
 
@@ -610,6 +623,16 @@ const deleteGoal = async (id: string) => {
                 @delete-goal="deleteGoal"
                 @edit-goal="openEditModal"
              />
+          </div>
+
+          <!-- COLLAPSED YEARLY COLUMN -->
+          <div
+            v-else
+            @click="toggleYearlyColumn"
+            class="hidden xl:flex flex-col items-center gap-3 pt-3 w-10 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 rounded-xl cursor-pointer hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
+          >
+            <ChevronLeft :size="16" class="text-slate-400 shrink-0" />
+            <span class="text-xs font-semibold text-slate-400 [writing-mode:vertical-lr]">Yearly</span>
           </div>
 
         </div>
