@@ -1,0 +1,124 @@
+import './style.css';
+
+// --- i18n ---
+const translations: Record<string, Record<string, string>> = {
+  en: {
+    'nav.signIn': 'Sign in',
+    'hero.title': 'Design your future, one goal at a time.',
+    'hero.subtitle': 'The free, AI-powered goal tracker that turns your ambitions into weekly, monthly, and yearly action plans.',
+    'hero.cta': 'Start for free',
+    'hero.ctaSecondary': 'See how it works',
+    'trust.join': 'Join goal-setters who plan smarter.',
+    'trust.free': 'Free forever',
+    'trust.noCard': 'No credit card',
+    'trust.quick': '2-minute setup',
+    'features.title': 'Everything you need to achieve more.',
+    'features.f1.title': 'Plan at every scale',
+    'features.f1.desc': 'Weekly, monthly, and yearly goals — unified in one beautiful view. Drag and drop between time horizons.',
+    'features.f2.title': 'AI Goal Architect',
+    'features.f2.desc': 'Describe your dream in plain text. AI breaks it into actionable steps across weeks, months, and years.',
+    'features.f3.title': 'Goal Pulse coaching',
+    'features.f3.desc': 'Contextual AI coaching that adapts to your progress. Personalized, actionable nudges.',
+    'preview.title': 'A dashboard built for clarity.',
+    'preview.subtitle': 'See your weekly sprints, monthly focus, and yearly vision — all at once.',
+    'how.title': 'Get started in three steps.',
+    'how.s1.title': 'Sign up in seconds',
+    'how.s1.desc': 'One click with Google, Facebook, or X. No forms.',
+    'how.s2.title': 'Set your goals',
+    'how.s2.desc': 'Add manually or let AI structure them for you.',
+    'how.s3.title': 'Track, adapt, achieve',
+    'how.s3.desc': 'Watch progress, get AI coaching, and adjust as life happens.',
+    'cta.title': 'Ready to design your future?',
+    'cta.subtitle': 'No credit card. No time limit. No catch.',
+    'cta.button': 'Get started — it\'s free',
+    'footer.tagline': 'Made with ambition.',
+  },
+  pl: {
+    'nav.signIn': 'Zaloguj się',
+    'hero.title': 'Projektuj swoją przyszłość, cel po celu.',
+    'hero.subtitle': 'Darmowy tracker celów z AI, który zamienia Twoje ambicje w tygodniowe, miesięczne i roczne plany działania.',
+    'hero.cta': 'Zacznij za darmo',
+    'hero.ctaSecondary': 'Zobacz jak to działa',
+    'trust.join': 'Dołącz do osób, które planują mądrzej.',
+    'trust.free': 'Na zawsze za darmo',
+    'trust.noCard': 'Bez karty kredytowej',
+    'trust.quick': 'Konfiguracja w 2 minuty',
+    'features.title': 'Wszystko czego potrzebujesz, by osiągnąć więcej.',
+    'features.f1.title': 'Planuj na każdą skalę',
+    'features.f1.desc': 'Cele tygodniowe, miesięczne i roczne — w jednym pięknym widoku. Przeciągaj i upuszczaj między horyzontami.',
+    'features.f2.title': 'AI Architekt celów',
+    'features.f2.desc': 'Opisz swoje marzenie prostym tekstem. AI rozbije je na konkretne kroki.',
+    'features.f3.title': 'Coaching Goal Pulse',
+    'features.f3.desc': 'Kontekstowy coaching AI dopasowany do Twojego postępu. Spersonalizowane, konkretne wskazówki.',
+    'preview.title': 'Dashboard zbudowany dla przejrzystości.',
+    'preview.subtitle': 'Tygodniowe sprinty, miesięczny focus i roczna wizja — wszystko na raz.',
+    'how.title': 'Zacznij w trzech krokach.',
+    'how.s1.title': 'Zarejestruj się w sekundy',
+    'how.s1.desc': 'Jedno kliknięcie z Google, Facebook lub X. Bez formularzy.',
+    'how.s2.title': 'Ustal swoje cele',
+    'how.s2.desc': 'Dodaj ręcznie lub pozwól AI je zorganizować.',
+    'how.s3.title': 'Śledź, adaptuj, osiągaj',
+    'how.s3.desc': 'Obserwuj postęp, korzystaj z coachingu AI i dostosowuj plany.',
+    'cta.title': 'Gotowy zaprojektować swoją przyszłość?',
+    'cta.subtitle': 'Bez karty kredytowej. Bez limitu czasu. Bez haczyków.',
+    'cta.button': 'Zacznij — to darmowe',
+    'footer.tagline': 'Stworzone z ambicją.',
+  },
+};
+
+let locale = localStorage.getItem('locale') || 'en';
+
+function t(key: string): string {
+  return translations[locale]?.[key] || translations['en']?.[key] || key;
+}
+
+function updateTexts() {
+  document.querySelectorAll<HTMLElement>('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (key) {
+      el.textContent = t(key);
+    }
+  });
+}
+
+// Language toggle
+document.getElementById('lang-toggle')?.addEventListener('click', () => {
+  locale = locale === 'en' ? 'pl' : 'en';
+  localStorage.setItem('locale', locale);
+  updateTexts();
+  const label = document.getElementById('lang-label');
+  if (label) label.textContent = locale.toUpperCase();
+});
+
+// --- Navbar scroll blur ---
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav?.classList.toggle('navbar-scrolled', window.scrollY > 50);
+});
+
+// --- Intersection Observer for scroll animations ---
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.landing-animate').forEach(el => observer.observe(el));
+
+// --- Smooth scroll ---
+document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const href = a.getAttribute('href');
+    if (href) {
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+// --- Init ---
+const langLabel = document.getElementById('lang-label');
+if (langLabel) langLabel.textContent = locale.toUpperCase();
+updateTexts();
