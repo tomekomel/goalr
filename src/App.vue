@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, ChevronsRight, Inbox, Moon, Sun } from 'lucide-vue-next';
+import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, ChevronsRight, Inbox, Moon, Sun, Sparkles } from 'lucide-vue-next';
 import { useDarkMode } from './composables/useDarkMode';
 import { useI18n } from './composables/useI18n';
 import { supabase } from './supabase';
@@ -10,6 +10,8 @@ import GoalCard from './components/GoalCard.vue';
 import GoalColumn from './components/GoalColumn.vue';
 import GoalModal from './components/GoalModal.vue';
 import AuthScreen from './components/AuthScreen.vue';
+import GoalArchitectModal from './components/GoalArchitectModal.vue';
+import type { GeneratedGoal } from './composables/useGoalArchitect';
 
 const { isDark, toggle: toggleDark } = useDarkMode();
 const { t, locale, localeCode, toggleLocale } = useI18n();
@@ -31,6 +33,7 @@ const dismissToast = (id: number) => {
   toasts.value = toasts.value.filter(t => t.id !== id);
 };
 const isModalOpen = ref(false);
+const isArchitectOpen = ref(false);
 const editingGoal = ref<Goal | null>(null);
 
 type ViewType = 'dashboard' | 'backlog';
@@ -369,6 +372,51 @@ const deleteGoal = async (id: string) => {
     showError(t('app.errorDelete'));
   }
 };
+
+const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
+  if (!session.value) return;
+
+  const payloads = generatedGoals.map(g => ({
+    title: g.title,
+    description: g.description,
+    period: g.period,
+    status: 'to-do' as GoalStatus,
+    progress: 0,
+    target_date: g.targetDate,
+    week_number: g.weekNumber ?? null,
+    user_id: session.value!.user.id,
+  }));
+
+  const { data, error } = await supabase.from('goals').insert(payloads).select();
+
+  if (error) {
+    showError(t('app.errorCreate'));
+    return;
+  }
+
+  if (data) {
+    const newGoals: Goal[] = data.map((g: any) => ({
+      id: g.id,
+      title: g.title,
+      description: g.description,
+      period: g.period as GoalPeriod,
+      status: g.status as GoalStatus,
+      progress: g.progress || 0,
+      createdAt: new Date(g.created_at).getTime(),
+      weekNumber: g.week_number,
+      targetDate: g.target_date,
+    }));
+    goals.value.unshift(...newGoals);
+
+    const id = ++toastId;
+    toasts.value.push({ id, message: t('architect.successAdd', newGoals.length) });
+    setTimeout(() => {
+      toasts.value = toasts.value.filter(t => t.id !== id);
+    }, 5000);
+  }
+
+  isArchitectOpen.value = false;
+};
 </script>
 
 <template>
@@ -394,6 +442,14 @@ const deleteGoal = async (id: string) => {
             >
               <Plus :size="16" />
               {{ t('app.addGoal') }}
+            </button>
+
+            <button
+              @click="isArchitectOpen = true"
+              class="bg-white dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <Sparkles :size="16" />
+              AI
             </button>
 
             <button
@@ -654,6 +710,12 @@ const deleteGoal = async (id: string) => {
         :goal="editingGoal"
         @close="isModalOpen = false"
         @save="saveGoal"
+      />
+
+      <GoalArchitectModal
+        v-if="isArchitectOpen"
+        @close="isArchitectOpen = false"
+        @save="saveGeneratedGoals"
       />
     </div>
 

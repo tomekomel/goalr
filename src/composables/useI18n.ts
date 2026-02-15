@@ -117,6 +117,24 @@ const translations: Record<Locale, Record<string, string>> = {
     'modal.month.9': 'Oct',
     'modal.month.10': 'Nov',
     'modal.month.11': 'Dec',
+
+    // Goal Architect
+    'architect.title': 'Goal Architect',
+    'architect.placeholder': 'Describe your goal in a few sentences...',
+    'architect.generate': 'Generate plan',
+    'architect.generating': 'AI is creating your plan...',
+    'architect.regenerate': 'Regenerate',
+    'architect.addSelected': 'Add selected',
+    'architect.cancel': 'Cancel',
+    'architect.yearly': 'Yearly Goals',
+    'architect.monthly': 'Monthly Goals',
+    'architect.weekly': 'Weekly Goals',
+    'architect.example1': 'Learn Spanish to B1 level this year',
+    'architect.example2': 'Run a half marathon in 6 months',
+    'architect.example3': 'Read 24 books this year',
+    'architect.errorGenerate': 'Failed to generate goals. Please try again.',
+    'architect.successAdd': 'Added {0} goals!',
+    'architect.noneSelected': 'Select at least one goal',
   },
   pl: {
     // App - Header & Nav
@@ -226,6 +244,24 @@ const translations: Record<Locale, Record<string, string>> = {
     'modal.month.9': 'Paź',
     'modal.month.10': 'Lis',
     'modal.month.11': 'Gru',
+
+    // Goal Architect
+    'architect.title': 'Architekt celów',
+    'architect.placeholder': 'Opisz swój cel w kilku zdaniach...',
+    'architect.generate': 'Generuj plan',
+    'architect.generating': 'AI tworzy plan...',
+    'architect.regenerate': 'Generuj ponownie',
+    'architect.addSelected': 'Dodaj wybrane',
+    'architect.cancel': 'Anuluj',
+    'architect.yearly': 'Cele roczne',
+    'architect.monthly': 'Cele miesięczne',
+    'architect.weekly': 'Cele tygodniowe',
+    'architect.example1': 'Nauczyć się hiszpańskiego do poziomu B1 w tym roku',
+    'architect.example2': 'Przebiec półmaraton w 6 miesięcy',
+    'architect.example3': 'Przeczytać 24 książki w tym roku',
+    'architect.errorGenerate': 'Nie udało się wygenerować celów. Spróbuj ponownie.',
+    'architect.successAdd': 'Dodano {0} celów!',
+    'architect.noneSelected': 'Wybierz co najmniej jeden cel',
   },
 };
 
