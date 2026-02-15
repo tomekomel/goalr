@@ -11,6 +11,7 @@ import GoalColumn from './components/GoalColumn.vue';
 import GoalModal from './components/GoalModal.vue';
 import AuthScreen from './components/AuthScreen.vue';
 import GoalArchitectModal from './components/GoalArchitectModal.vue';
+import GoalPulseModal from './components/GoalPulseModal.vue';
 import type { GeneratedGoal } from './composables/useGoalArchitect';
 
 const { isDark, toggle: toggleDark } = useDarkMode();
@@ -34,6 +35,8 @@ const dismissToast = (id: number) => {
 };
 const isModalOpen = ref(false);
 const isArchitectOpen = ref(false);
+const isPulseOpen = ref(false);
+const pulseGoal = ref<Goal | null>(null);
 const editingGoal = ref<Goal | null>(null);
 
 type ViewType = 'dashboard' | 'backlog';
@@ -417,6 +420,54 @@ const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
 
   isArchitectOpen.value = false;
 };
+
+const openPulseModal = (goal: Goal) => {
+  pulseGoal.value = goal;
+  isPulseOpen.value = true;
+};
+
+const pulseSiblingGoals = computed(() => {
+  if (!pulseGoal.value) return [];
+  const g = pulseGoal.value;
+  return goals.value.filter(sg => {
+    if (sg.id === g.id) return false;
+    if (sg.period !== g.period) return false;
+    if (g.period === 'yearly') return sg.targetDate?.startsWith(currentYearStr.value);
+    return sg.targetDate?.startsWith(currentMonthStr.value);
+  });
+});
+
+const handlePulseUpdate = async ({ id, status, progress }: { id: string; status: string; progress: number }) => {
+  const goal = goals.value.find(g => g.id === id);
+  if (!goal) return;
+
+  const prevStatus = goal.status;
+  const prevProgress = goal.progress;
+
+  goal.status = status as GoalStatus;
+  goal.progress = progress;
+  isPulseOpen.value = false;
+  pulseGoal.value = null;
+
+  const { error } = await supabase.from('goals').update({
+    status,
+    progress,
+    updated_at: new Date().toISOString(),
+  }).eq('id', id);
+
+  if (error) {
+    goal.status = prevStatus;
+    goal.progress = prevProgress;
+    showError(t('app.errorUpdateGoal'));
+  }
+};
+
+const handlePulseEdit = (goal: Goal) => {
+  isPulseOpen.value = false;
+  pulseGoal.value = null;
+  editingGoal.value = goal;
+  isModalOpen.value = true;
+};
 </script>
 
 <template>
@@ -615,6 +666,7 @@ const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
                   @update:goals="updateGoals({ period: 'monthly' }, $event)"
                   @delete-goal="deleteGoal"
                   @edit-goal="openEditModal"
+                  @pulse-goal="openPulseModal"
                />
 
                <!-- Rows 2-5: Weekly Goals -->
@@ -631,6 +683,7 @@ const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
                     @update:goals="updateGoals({ period: 'weekly', weekNumber: week }, $event)"
                     @delete-goal="deleteGoal"
                     @edit-goal="openEditModal"
+                    @pulse-goal="openPulseModal"
                   />
                </div>
              </div>
@@ -688,6 +741,7 @@ const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
                 @update:goals="updateGoals({ period: 'yearly' }, $event)"
                 @delete-goal="deleteGoal"
                 @edit-goal="openEditModal"
+                @pulse-goal="openPulseModal"
              />
           </div>
 
@@ -716,6 +770,15 @@ const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
         v-if="isArchitectOpen"
         @close="isArchitectOpen = false"
         @save="saveGeneratedGoals"
+      />
+
+      <GoalPulseModal
+        v-if="isPulseOpen && pulseGoal"
+        :goal="pulseGoal"
+        :sibling-goals="pulseSiblingGoals"
+        @close="isPulseOpen = false; pulseGoal = null"
+        @update-goal="handlePulseUpdate"
+        @edit-goal="handlePulseEdit"
       />
     </div>
 

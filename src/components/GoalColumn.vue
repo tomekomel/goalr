@@ -25,6 +25,7 @@ const emit = defineEmits<{
   (e: 'update:goals', value: Goal[]): void;
   (e: 'delete-goal', id: string): void;
   (e: 'edit-goal', goal: Goal): void;
+  (e: 'pulse-goal', goal: Goal): void;
 }>();
 
 // Local copy for draggable to mutate
@@ -93,6 +94,7 @@ const gridClasses = {
           :goal="element"
           @delete="$emit('delete-goal', $event)"
           @edit="$emit('edit-goal', $event)"
+          @pulse="$emit('pulse-goal', $event)"
         />
       </template>
       <template #footer>

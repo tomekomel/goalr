@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onUnmounted } from 'vue';
 import type { Goal } from '../types';
-import { Trash2, Pencil, Circle, CircleDashed, Timer, CheckCircle2, GripVertical, X } from 'lucide-vue-next';
+import { Trash2, Pencil, Circle, CircleDashed, Timer, CheckCircle2, GripVertical, X, Activity } from 'lucide-vue-next';
 import { useI18n } from '../composables/useI18n';
 
 const { t, localeCode } = useI18n();
@@ -14,6 +14,7 @@ const emit = defineEmits<{
   (e: 'delete', id: string): void;
   (e: 'edit', goal: Goal): void;
   (e: 'start', id: string): void;
+  (e: 'pulse', goal: Goal): void;
 }>();
 
 const confirmingDelete = ref(false);
@@ -67,7 +68,7 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
     <div class="flex items-center justify-between mb-2">
       <!-- Status Badge -->
       <div
-        class="flex items-center gap-0.5 px-1.5 py-px rounded-full border border-transparent"
+        class="flex items-center gap-0.5 px-1.5 py-px rounded-full border border-transparent shrink-0 whitespace-nowrap"
         :class="[getStatusConfig(goal.status).bg, getStatusConfig(goal.status).color]"
       >
         <component :is="getStatusConfig(goal.status).icon" :size="8" stroke-width="3" />
@@ -101,6 +102,14 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
             :aria-label="t('card.start')"
           >
             {{ t('card.start') }}
+          </button>
+          <button
+            v-if="['to-do', 'in-progress'].includes(goal.status)"
+            @click.stop="$emit('pulse', goal)"
+            class="text-slate-300 dark:text-slate-600 hover:text-amber-500 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
+            :aria-label="t('card.pulse')"
+          >
+            <Activity :size="12" />
           </button>
           <button
             @click="$emit('edit', goal)"

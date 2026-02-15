@@ -135,6 +135,20 @@ const translations: Record<Locale, Record<string, string>> = {
     'architect.errorGenerate': 'Failed to generate goals. Please try again.',
     'architect.successAdd': 'Added {0} goals!',
     'architect.noneSelected': 'Select at least one goal',
+
+    // Goal Pulse
+    'card.pulse': 'Goal Pulse',
+    'pulse.title': 'Goal Pulse',
+    'pulse.loading': 'Analyzing your goal...',
+    'pulse.error': 'Could not get coaching. Please try again.',
+    'pulse.retry': 'Try again',
+    'pulse.startWorking': 'Start working',
+    'pulse.saveProgress': 'Save progress',
+    'pulse.markDone': 'Mark as done',
+    'pulse.editGoal': 'Edit goal',
+    'pulse.progress': 'Progress',
+    'pulse.riskHigh': 'At risk',
+    'pulse.riskLow': 'Needs attention',
   },
   pl: {
     // App - Header & Nav
@@ -262,6 +276,20 @@ const translations: Record<Locale, Record<string, string>> = {
     'architect.errorGenerate': 'Nie udało się wygenerować celów. Spróbuj ponownie.',
     'architect.successAdd': 'Dodano {0} celów!',
     'architect.noneSelected': 'Wybierz co najmniej jeden cel',
+
+    // Goal Pulse
+    'card.pulse': 'Puls celu',
+    'pulse.title': 'Puls celu',
+    'pulse.loading': 'Analizuję Twój cel...',
+    'pulse.error': 'Nie udało się. Spróbuj ponownie.',
+    'pulse.retry': 'Spróbuj ponownie',
+    'pulse.startWorking': 'Zacznij pracować',
+    'pulse.saveProgress': 'Zapisz postęp',
+    'pulse.markDone': 'Oznacz jako ukończone',
+    'pulse.editGoal': 'Edytuj cel',
+    'pulse.progress': 'Postęp',
+    'pulse.riskHigh': 'Zagrożone',
+    'pulse.riskLow': 'Wymaga uwagi',
   },
 };
 
