@@ -408,11 +408,29 @@
       </h2>
 
       <!-- Feature 1: Plan at every scale — text left, visual right -->
-      <div class="landing-animate grid md:grid-cols-2 gap-10 md:gap-16 items-center mb-24 md:mb-32">
-        <div>
+      <div class="landing-animate grid md:grid-cols-2 gap-10 md:gap-16 items-start mb-24 md:mb-32">
+        <div class="md:pt-12">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5" data-i18n="features.f1.badge">Planning</div>
           <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4" data-i18n="features.f1.title">Plan at every scale</h3>
-          <p class="text-slate-400 text-base leading-relaxed" data-i18n="features.f1.desc">Weekly, monthly, and yearly goals — unified in one beautiful view. Drag and drop between time horizons to restructure your plans effortlessly. See the big picture and the details at the same time.</p>
+          <p class="text-slate-400 text-base leading-relaxed mb-6" data-i18n="features.f1.desc">Weekly, monthly, and yearly goals — unified in one beautiful view. Drag and drop between time horizons to restructure your plans effortlessly. See the big picture and the details at the same time.</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f1.h1">Unified weekly, monthly, and yearly view in one dashboard</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f1.h2">Drag & drop goals between time horizons instantly</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f1.h3">Real-time progress tracking with visual indicators</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f1.h4">Month and year navigation to review past and future plans</span>
+            </li>
+          </ul>
         </div>
         <!-- Visual: Dashboard columns replica -->
         <div class="rounded-2xl border border-slate-800 bg-slate-900 shadow-xl overflow-hidden">
@@ -543,7 +561,7 @@
       </div>
 
       <!-- Feature 2: AI Goal Architect — visual left, text right (reversed) -->
-      <div class="landing-animate grid md:grid-cols-2 gap-10 md:gap-16 items-center mb-24 md:mb-32">
+      <div class="landing-animate grid md:grid-cols-2 gap-10 md:gap-16 items-start mb-24 md:mb-32">
         <!-- Visual: GoalArchitectModal replica -->
         <div class="order-2 md:order-1 rounded-3xl bg-slate-800 border border-slate-700 shadow-2xl p-6 md:p-8 relative">
           <!-- Modal header -->
@@ -622,19 +640,55 @@
             </div>
           </div>
         </div>
-        <div class="order-1 md:order-2">
+        <div class="order-1 md:order-2 md:pt-12">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5" data-i18n="features.f2.badge">AI-powered</div>
           <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4" data-i18n="features.f2.title">AI Goal Architect</h3>
-          <p class="text-slate-400 text-base leading-relaxed" data-i18n="features.f2.desc">Describe your dream in plain text. AI breaks it into actionable steps across weeks, months, and years — structured, realistic, and ready to track.</p>
+          <p class="text-slate-400 text-base leading-relaxed mb-6" data-i18n="features.f2.desc">Describe your dream in plain text. AI breaks it into actionable steps across weeks, months, and years — structured, realistic, and ready to track.</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f2.h1">Describe any goal in plain, everyday language</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f2.h2">AI generates structured, realistic action steps</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f2.h3">Steps organized by week, month, and year automatically</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f2.h4">Regenerate or fine-tune until the plan fits perfectly</span>
+            </li>
+          </ul>
         </div>
       </div>
 
       <!-- Feature 3: Goal Pulse — text left, visual right -->
-      <div class="landing-animate grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <div>
+      <div class="landing-animate grid md:grid-cols-2 gap-10 md:gap-16 items-start">
+        <div class="md:pt-12">
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-5" data-i18n="features.f3.badge">Coaching</div>
           <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4" data-i18n="features.f3.title">Goal Pulse coaching</h3>
-          <p class="text-slate-400 text-base leading-relaxed" data-i18n="features.f3.desc">Contextual AI coaching that adapts to your progress. Get personalized, actionable nudges that keep you moving forward — not generic motivation.</p>
+          <p class="text-slate-400 text-base leading-relaxed mb-6" data-i18n="features.f3.desc">Contextual AI coaching that adapts to your progress. Get personalized, actionable nudges that keep you moving forward — not generic motivation.</p>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f3.h1">Coaching adapts to your unique pace and style</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f3.h2">Risk assessment highlights goals that need attention</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f3.h3">Actionable suggestions, not generic motivation</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300" data-i18n="features.f3.h4">Update progress and mark goals done in one click</span>
+            </li>
+          </ul>
         </div>
         <!-- Visual: GoalPulseModal replica -->
         <div class="pulse-glow rounded-3xl bg-slate-800 border border-slate-700 shadow-2xl p-6 md:p-8 relative overflow-hidden">
