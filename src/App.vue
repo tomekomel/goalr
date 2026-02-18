@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { Plus, Target, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, ChevronsRight, Inbox, Moon, Sun, Sparkles } from 'lucide-vue-next';
+import { Plus, LogOut, LayoutDashboard, ListTodo, X, ChevronLeft, ChevronRight, ChevronsRight, Inbox, Moon, Sun, Sparkles } from 'lucide-vue-next';
 import { useDarkMode } from './composables/useDarkMode';
 import { useI18n } from './composables/useI18n';
 import { supabase } from './supabase';
@@ -478,8 +478,12 @@ const handlePulseEdit = (goal: Goal) => {
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 mb-5">
           <div>
             <div class="flex items-center gap-2.5 mb-1">
-              <div class="bg-primary p-1.5 rounded-lg shadow-lg shadow-primary/30 text-white">
-                <Target :size="20" />
+              <div class="bg-primary p-1.5 rounded-lg shadow-lg shadow-primary/30 text-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+                  <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none"/>
+                  <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                </svg>
               </div>
               <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter">goalr.</h1>
             </div>
