@@ -6,6 +6,11 @@
 }
 
 /* Navbar */
+#navbar {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, backdrop-filter, -webkit-backdrop-filter;
+  transition-duration: 300ms;
+  transition-timing-function: ease;
+}
 .navbar-scrolled {
   @apply bg-slate-950/80 backdrop-blur-md border-b border-slate-800/50;
 }

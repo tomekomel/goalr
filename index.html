@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth" style="background-color:#020617">
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -15,10 +15,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-300 font-sans antialiased">
+<body class="bg-slate-950 text-slate-300 font-sans antialiased" style="background-color:#020617">
 
   <!-- ========== NAVBAR ========== -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
     <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
       <!-- Logo -->
       <a href="/" class="flex items-center gap-2.5 focus-visible:outline-none">
@@ -433,7 +433,7 @@
           </ul>
         </div>
         <!-- Visual: Dashboard columns replica -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900 shadow-xl overflow-hidden">
+        <div class="rounded-2xl border border-slate-800 bg-slate-900 shadow-xl overflow-hidden md:mt-12">
           <!-- Mini header -->
           <div class="flex items-center justify-between px-4 py-2.5 border-b border-slate-800">
             <div class="flex items-center gap-1.5">
@@ -754,21 +754,18 @@
         Get started in three steps.
       </h2>
 
-      <div class="grid md:grid-cols-3 gap-8 relative">
-        <!-- Connecting line (desktop) -->
-        <div class="hidden md:block absolute top-[3.5rem] left-[16.67%] right-[16.67%] h-0.5 steps-line opacity-20 connecting-dots"></div>
+      <div class="grid md:grid-cols-3 gap-6 md:gap-8">
 
         <!-- Step 1 -->
-        <div class="landing-animate step-card rounded-2xl bg-slate-900/60 border border-slate-800 p-8 relative text-center">
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-5 relative">
+        <div class="landing-animate step-card rounded-2xl bg-slate-900/60 border border-slate-800 p-8 md:p-10 relative text-center">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-6">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
-            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 border border-emerald-500/50 flex items-center justify-center text-[10px] font-bold text-emerald-400">1</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2" data-i18n="how.s1.title">Sign up in seconds</h3>
+          <h3 class="text-xl font-bold text-white mb-3" data-i18n="how.s1.title">Sign up in seconds</h3>
           <p class="text-slate-400 text-sm leading-relaxed" data-i18n="how.s1.desc">One click with Google, Facebook, or X. No forms, no friction.</p>
-          <div class="flex items-center justify-center gap-3 mt-5">
+          <div class="flex items-center justify-center gap-4 mt-6">
             <!-- Google -->
             <svg class="w-5 h-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -788,36 +785,47 @@
         </div>
 
         <!-- Step 2 -->
-        <div class="landing-animate step-card rounded-2xl bg-slate-900/60 border border-slate-800 p-8 relative text-center">
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-5 relative">
+        <div class="landing-animate step-card rounded-2xl bg-slate-900/60 border border-slate-800 p-8 md:p-10 relative text-center">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-6">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 border border-emerald-500/50 flex items-center justify-center text-[10px] font-bold text-emerald-400">2</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2" data-i18n="how.s2.title">Set your goals</h3>
+          <h3 class="text-xl font-bold text-white mb-3" data-i18n="how.s2.title">Set your goals</h3>
           <p class="text-slate-400 text-sm leading-relaxed" data-i18n="how.s2.desc">Add goals manually or let AI structure them for you. Organize by week, month, or year.</p>
-          <!-- Mini goal card hint -->
-          <div class="mt-5 mx-auto max-w-[160px] hero-mockup-card p-2">
-            <p class="text-[9px] text-slate-300 truncate">Launch MVP</p>
-            <div class="w-full h-1 rounded-full bg-slate-700 mt-1"><div class="h-full rounded-full bg-emerald-500" style="width: 40%"></div></div>
+          <!-- Mini goal card — mirrors app GoalCard -->
+          <div class="mt-6 mx-auto max-w-[200px] bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-left relative overflow-hidden">
+            <p class="text-[11px] font-semibold text-slate-200 mb-1.5">Launch MVP</p>
+            <div class="flex items-center gap-1 mb-2">
+              <span class="flex items-center gap-0.5 px-1.5 py-px rounded-full bg-violet-950/50">
+                <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+                <span class="text-[8px] font-medium uppercase tracking-wider text-violet-400">in progress</span>
+              </span>
+              <span class="text-[8px] font-medium text-slate-500">&middot; 40%</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="w-1 h-1 rounded-full bg-slate-600"></span>
+              <span class="text-[7px] uppercase tracking-wider font-medium text-slate-500">Mar 15</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-slate-700 rounded-b-lg overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400" style="width: 40%"></div>
+            </div>
           </div>
         </div>
 
         <!-- Step 3 -->
-        <div class="landing-animate step-card rounded-2xl bg-slate-900/60 border border-slate-800 p-8 relative text-center">
-          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-5 relative">
+        <div class="landing-animate step-card rounded-2xl bg-slate-900/60 border border-slate-800 p-8 md:p-10 relative text-center">
+          <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center mx-auto mb-6">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
             </svg>
-            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-slate-900 border border-emerald-500/50 flex items-center justify-center text-[10px] font-bold text-emerald-400">3</span>
           </div>
-          <h3 class="text-xl font-bold text-white mb-2" data-i18n="how.s3.title">Track, adapt, achieve</h3>
+          <h3 class="text-xl font-bold text-white mb-3" data-i18n="how.s3.title">Track, adapt, achieve</h3>
           <p class="text-slate-400 text-sm leading-relaxed" data-i18n="how.s3.desc">Watch progress in real time, get AI coaching, and adjust as life happens.</p>
-          <!-- Mini progress indicator -->
-          <div class="mt-5 mx-auto w-12 h-12 progress-ring" style="--progress: 252deg">
-            <div class="progress-ring-inner w-9 h-9">
-              <span class="text-[10px] font-bold text-emerald-400">70%</span>
+          <!-- Progress ring -->
+          <div class="mt-6 mx-auto w-14 h-14 progress-ring" style="--progress: 252deg">
+            <div class="progress-ring-inner w-10 h-10">
+              <span class="text-xs font-bold text-emerald-400">70%</span>
             </div>
           </div>
         </div>
