@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth" style="background-color:#020617">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{TITLE}} | goalr Blog</title>
+  <meta name="description" content="{{EXCERPT}}">
+  <meta property="og:title" content="{{TITLE}} | goalr Blog">
+  <meta property="og:description" content="{{EXCERPT}}">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://goalr.ai/blog/{{SLUG}}/">
+  <link rel="canonical" href="https://goalr.ai/blog/{{SLUG}}/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{TITLE}}",
+    "description": "{{EXCERPT}}",
+    "datePublished": "{{DATE}}",
+    "author": {
+      "@type": "Organization",
+      "name": "goalr"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "goalr",
+      "url": "https://goalr.ai"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://goalr.ai/blog/{{SLUG}}/"
+    }
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-300 font-sans antialiased" style="background-color:#020617">
+
+  <!-- ========== NAVBAR ========== -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2.5 focus-visible:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" class="w-8 h-8">
+          <rect width="32" height="32" rx="8" fill="#0f172a"/>
+          <circle cx="16" cy="16" r="11" stroke="#059669" stroke-width="2.5" fill="none"/>
+          <circle cx="16" cy="16" r="6" stroke="#10b981" stroke-width="2" fill="none"/>
+          <circle cx="16" cy="16" r="2.5" fill="#34d399"/>
+        </svg>
+        <span class="text-xl font-extrabold text-slate-100 tracking-tight">goalr<span class="text-emerald-500">.</span></span>
+      </a>
+      <div class="flex items-center gap-5">
+        <button id="lang-toggle" class="text-sm font-semibold text-slate-400 hover:text-slate-200 transition-colors cursor-pointer">
+          <span id="lang-label">EN</span>
+        </button>
+        <a href="/app/" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors" data-i18n="nav.signIn">Sign in</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== ARTICLE ========== -->
+  <article class="pt-32 pb-20 md:pt-44 md:pb-32">
+    <div class="max-w-3xl mx-auto px-6">
+      <!-- Back link -->
+      <a href="/blog/" class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-emerald-400 transition-colors mb-8">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        <span data-i18n="blog.backToAll">All posts</span>
+      </a>
+
+      <!-- Meta -->
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">{{CATEGORY}}</span>
+          <span class="text-xs text-slate-500">{{DATE_FORMATTED}} · {{READ_TIME}} <span data-i18n="blog.minRead">min read</span></span>
+        </div>
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight">{{TITLE}}</h1>
+        <p class="mt-4 text-lg text-slate-400">{{EXCERPT}}</p>
+      </div>
+
+      <hr class="border-slate-800 mb-10">
+
+      <!-- Content -->
+      <div class="article-content">
+        {{CONTENT}}
+      </div>
+    </div>
+  </article>
+
+  <!-- ========== CTA ========== -->
+  <section class="py-24 md:py-32 border-t border-slate-800/50">
+    <div class="max-w-3xl mx-auto px-6 text-center">
+      <h2 class="landing-animate text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-6" data-i18n="blog.cta.title">
+        Ready to put this into practice?
+      </h2>
+      <p class="landing-animate text-slate-400 text-lg mb-10" data-i18n="blog.cta.subtitle">
+        Start tracking your goals for free. No credit card required.
+      </p>
+      <div class="landing-animate">
+        <a href="/app/" class="inline-flex items-center justify-center px-10 py-4 bg-emerald-500 hover:bg-emerald-400 text-white font-bold rounded-xl text-lg transition-all hover:shadow-lg hover:shadow-emerald-500/25 active:scale-95" data-i18n="blog.cta.button">
+          Start for free
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RELATED POSTS ========== -->
+  <section class="py-16 md:py-20 border-t border-slate-800/50">
+    <div class="max-w-5xl mx-auto px-6">
+      <h3 class="text-xl font-bold text-white mb-8 text-center">More from the Playbook</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        {{RELATED_POSTS}}
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="border-t border-slate-800/50 py-10">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" class="w-6 h-6">
+          <rect width="32" height="32" rx="8" fill="#0f172a"/>
+          <circle cx="16" cy="16" r="11" stroke="#059669" stroke-width="2.5" fill="none"/>
+          <circle cx="16" cy="16" r="6" stroke="#10b981" stroke-width="2" fill="none"/>
+          <circle cx="16" cy="16" r="2.5" fill="#34d399"/>
+        </svg>
+        <span class="text-sm font-bold text-slate-400">goalr<span class="text-emerald-500">.</span></span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="/blog/" class="text-xs text-slate-500 hover:text-slate-300 transition-colors">Blog</a>
+        <p class="text-xs text-slate-500">
+          <span data-i18n="footer.tagline">Made with ambition.</span> &copy; 2026 goalr
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/blog/main.ts"></script>
+</body>
+</html>
