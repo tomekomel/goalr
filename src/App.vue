@@ -234,9 +234,9 @@ const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number },
 
   if (goalsToUpdate.length === 0) return;
 
-  // Calculate targetDate for the context (1st of current month, LOCAL time)
-  const now = new Date();
-  const targetDateObj = new Date(now.getFullYear(), now.getMonth(), 1);
+  // Calculate targetDate for the context (1st of viewed month, LOCAL time)
+  const viewed = currentDate.value;
+  const targetDateObj = new Date(viewed.getFullYear(), viewed.getMonth(), 1);
   const targetDate = formatDateLocal(targetDateObj);
 
   const updatedGoals = goalsToUpdate.map(g => ({
