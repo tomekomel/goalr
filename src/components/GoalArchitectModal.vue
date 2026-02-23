@@ -40,6 +40,7 @@ const useExample = (example: string) => {
 };
 
 const handleGenerate = async () => {
+  if (state.value === 'loading') return;
   if (!canGenerate.value) return;
   state.value = 'loading';
 

@@ -29,6 +29,10 @@ export function useGoalArchitect() {
         throw new Error(fnError.message || 'Failed to generate goals');
       }
 
+      if (!data || !data.goals) {
+        throw new Error('Invalid response from goal generation');
+      }
+
       return data.goals as GeneratedGoal[];
     } catch (e: any) {
       error.value = e.message || 'Failed to generate goals';

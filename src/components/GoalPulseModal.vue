@@ -50,7 +50,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 };
 
 const handleStartWorking = () => {
-  emit('update-goal', { id: props.goal.id, status: 'in-progress', progress: 10 });
+  emit('update-goal', { id: props.goal.id, status: 'in-progress', progress: Math.max(props.goal.progress, 10) });
 };
 
 const handleSaveProgress = () => {

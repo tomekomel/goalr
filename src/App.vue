@@ -19,12 +19,20 @@ const { t, locale, localeCode, toggleLocale } = useI18n();
 const session = ref<Session | null>(null);
 
 // Toast notifications
-const toasts = ref<{ id: number; message: string }[]>([]);
+const toasts = ref<{ id: number; message: string; type: 'error' | 'success' }[]>([]);
 let toastId = 0;
 
 const showError = (message: string) => {
   const id = ++toastId;
-  toasts.value.push({ id, message });
+  toasts.value.push({ id, message, type: 'error' });
+  setTimeout(() => {
+    toasts.value = toasts.value.filter(t => t.id !== id);
+  }, 5000);
+};
+
+const showSuccess = (message: string) => {
+  const id = ++toastId;
+  toasts.value.push({ id, message, type: 'success' });
   setTimeout(() => {
     toasts.value = toasts.value.filter(t => t.id !== id);
   }, 5000);
@@ -56,6 +64,7 @@ const toggleYearlyColumn = () => {
 const goals = ref<Goal[]>([]);
 const isLoading = ref(true);
 const currentDate = ref(new Date());
+const currentYearForYearly = ref(new Date().getFullYear());
 
 const currentMonthName = computed(() => currentDate.value.toLocaleString(localeCode.value, { month: 'long' }));
 const currentYear = computed(() => currentDate.value.getFullYear());
@@ -67,22 +76,22 @@ const isCurrentMonth = computed(() => {
 
 const navigateMonth = (delta: number) => {
   const d = new Date(currentDate.value);
+  d.setDate(1);
   d.setMonth(d.getMonth() + delta);
   currentDate.value = d;
 };
 
 const navigateYear = (delta: number) => {
-  const d = new Date(currentDate.value);
-  d.setFullYear(d.getFullYear() + delta);
-  currentDate.value = d;
+  currentYearForYearly.value += delta;
 };
 
 const isCurrentYear = computed(() => {
-  return currentDate.value.getFullYear() === new Date().getFullYear();
+  return currentYearForYearly.value === new Date().getFullYear();
 });
 
 const goToToday = () => {
   currentDate.value = new Date();
+  currentYearForYearly.value = new Date().getFullYear();
 };
 
 const currentWeekNumber = computed(() => Math.min(Math.ceil(new Date().getDate() / 7), 4));
@@ -119,7 +128,7 @@ const fetchGoals = async () => {
       title: g.title,
       description: g.description,
       period: g.period as GoalPeriod,
-      status: (g.status === 'archived' ? 'done' : (g.status || 'planned')) as GoalStatus,
+      status: (g.status || 'planned') as GoalStatus,
       progress: g.progress || 0,
       createdAt: new Date(g.created_at).getTime(),
       weekNumber: g.week_number || (g.period === 'weekly' ? currentWeek : undefined),
@@ -134,7 +143,6 @@ let authSubscription: { unsubscribe: () => void } | null = null;
 onMounted(() => {
   supabase.auth.getSession().then(({ data }) => {
     session.value = data.session;
-    if (session.value) fetchGoals();
   });
 
   const { data } = supabase.auth.onAuthStateChange((_, _session) => {
@@ -157,11 +165,11 @@ const currentMonthStr = computed(() => {
   const now = currentDate.value;
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 });
-const currentYearStr = computed(() => `${currentDate.value.getFullYear()}`);
+const currentYearStr = computed(() => `${currentYearForYearly.value}`);
 
 const filterByView = (list: Goal[]) => {
   if (currentView.value === 'dashboard') {
-    return list.filter(g => ['to-do', 'in-progress', 'done'].includes(g.status));
+    return list.filter(g => ['to-do', 'in-progress', 'done', 'archived'].includes(g.status));
   } else if (currentView.value === 'backlog') {
     return list.filter(g => g.status === 'planned');
   }
@@ -169,10 +177,20 @@ const filterByView = (list: Goal[]) => {
 };
 
 const filterByDate = (list: Goal[], period: GoalPeriod) => {
+  const now = new Date();
+  const realMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const realYearStr = `${now.getFullYear()}`;
+
   if (period === 'monthly' || period === 'weekly') {
-    return list.filter(g => !g.targetDate || g.targetDate.startsWith(currentMonthStr.value));
+    return list.filter(g => {
+      if (!g.targetDate) return currentMonthStr.value === realMonthStr;
+      return g.targetDate.startsWith(currentMonthStr.value);
+    });
   } else if (period === 'yearly') {
-    return list.filter(g => !g.targetDate || g.targetDate.startsWith(currentYearStr.value));
+    return list.filter(g => {
+      if (!g.targetDate) return currentYearStr.value === realYearStr;
+      return g.targetDate.startsWith(currentYearStr.value);
+    });
   }
   return list;
 };
@@ -206,7 +224,7 @@ const backlogGoals = computed(() => goals.value.filter(g => g.status === 'planne
 // Stats for monthly (monthly + weekly combined) and yearly
 const calcStats = (goalList: Goal[]) => {
   const total = goalList.length;
-  const done = goalList.filter(g => g.status === 'done').length;
+  const done = goalList.filter(g => g.status === 'done' || g.status === 'archived').length;
   const inProgress = goalList.filter(g => g.status === 'in-progress').length;
   const toDo = total - done - inProgress;
   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
@@ -234,9 +252,11 @@ const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number },
 
   if (goalsToUpdate.length === 0) return;
 
-  // Calculate targetDate for the context (1st of viewed month, LOCAL time)
+  // Calculate targetDate for the context (1st of viewed month/year, LOCAL time)
   const viewed = currentDate.value;
-  const targetDateObj = new Date(viewed.getFullYear(), viewed.getMonth(), 1);
+  const targetDateObj = context.period === 'yearly'
+    ? new Date(currentYearForYearly.value, 0, 1)
+    : new Date(viewed.getFullYear(), viewed.getMonth(), 1);
   const targetDate = formatDateLocal(targetDateObj);
 
   const updatedGoals = goalsToUpdate.map(g => ({
@@ -246,6 +266,9 @@ const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number },
     targetDate: targetDate,
     updated_at: new Date().toISOString() // for local view
   }));
+
+  // Save previous state for rollback
+  const previousGoals = [...goals.value];
 
   // Update local state
   goals.value = goals.value.map(g => {
@@ -269,6 +292,7 @@ const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number },
 
   const failed = results.filter(r => r.error);
   if (failed.length > 0) {
+    goals.value = previousGoals;
     showError(t('app.errorUpdate', failed.length));
   }
 };
@@ -356,12 +380,21 @@ const startGoal = async (id: string) => {
   const goal = goals.value.find(g => g.id === id);
   if (!goal) return;
 
+  const prevStatus = goal.status;
+  const prevTargetDate = goal.targetDate;
+
+  // Set targetDate to 1st day of current viewed month
+  const targetDateObj = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), 1);
+  const targetDate = formatDateLocal(targetDateObj);
+
   // Optimistic update
   goal.status = 'to-do';
+  goal.targetDate = targetDate;
 
-  const { error } = await supabase.from('goals').update({ status: 'to-do', updated_at: new Date().toISOString() }).eq('id', id);
+  const { error } = await supabase.from('goals').update({ status: 'to-do', target_date: targetDate, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) {
-    goal.status = 'planned';
+    goal.status = prevStatus;
+    goal.targetDate = prevTargetDate;
     showError(t('app.errorStart'));
   }
 };
@@ -411,11 +444,7 @@ const saveGeneratedGoals = async (generatedGoals: GeneratedGoal[]) => {
     }));
     goals.value.unshift(...newGoals);
 
-    const id = ++toastId;
-    toasts.value.push({ id, message: t('architect.successAdd', newGoals.length) });
-    setTimeout(() => {
-      toasts.value = toasts.value.filter(t => t.id !== id);
-    }, 5000);
+    showSuccess(t('architect.successAdd', newGoals.length));
   }
 
   isArchitectOpen.value = false;
@@ -699,7 +728,7 @@ const handlePulseEdit = (goal: Goal) => {
                 <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.prevYear')">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ t('app.yearLabel') }} <span class="text-indigo-600">{{ currentYear }}</span></h2>
+                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ t('app.yearLabel') }} <span class="text-indigo-600">{{ currentYearForYearly }}</span></h2>
                 <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.nextYear')">
                   <ChevronRight :size="18" />
                 </button>
@@ -793,7 +822,8 @@ const handlePulseEdit = (goal: Goal) => {
       <div
         v-for="toast in toasts"
         :key="toast.id"
-        class="flex items-center gap-3 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-in slide-in-from-right fade-in duration-300"
+        class="flex items-center gap-3 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-sm animate-in slide-in-from-right fade-in duration-300"
+        :class="toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'"
       >
         <span class="flex-1">{{ toast.message }}</span>
         <button @click="dismissToast(toast.id)" class="text-white/70 hover:text-white transition-colors shrink-0 focus-visible:ring-2 focus-visible:ring-white rounded" :aria-label="t('app.dismissNotification')">

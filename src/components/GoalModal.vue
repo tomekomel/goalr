@@ -85,7 +85,6 @@ const handleSubmit = () => {
   }
 
   emit('save', payload);
-  emit('close');
 };
 
 const periods: GoalPeriod[] = ['weekly', 'monthly', 'yearly'];
