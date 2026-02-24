@@ -1,5 +1,4 @@
 import './style.css';
-import * as THREE from 'three';
 
 // --- i18n ---
 const translations: Record<string, Record<string, string>> = {
@@ -159,7 +158,7 @@ window.addEventListener('scroll', () => {
   nav?.classList.toggle('navbar-scrolled', window.scrollY > 50);
 });
 
-// --- Intersection Observer for scroll animations (Teksty i UI) ---
+// --- Intersection Observer for scroll animations ---
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -181,102 +180,119 @@ document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(a => {
   });
 });
 
-// --- WebGL Background Animation: Goal Network (Z optymalizacją) ---
-function initWebGLBackground() {
-  const canvas = document.getElementById('hero-webgl-canvas') as HTMLCanvasElement;
+// --- WebGL Particle Background (lazy-loaded) ---
+async function initWebGLBackground() {
+  const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement;
   if (!canvas) return;
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  // Kaganiec na rozdzielczość dla telefonów z mocnymi ekranami
+  const {
+    WebGLRenderer, Scene, PerspectiveCamera,
+    BufferGeometry, Float32BufferAttribute,
+    PointsMaterial, Points, AdditiveBlending
+  } = await import('three');
+
+  const renderer = new WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(75, 1, 0.1, 1000);
   camera.position.z = 150;
 
-  // Tworzenie "Zadań/Celów" jako cząsteczek
-  const particlesGeometry = new THREE.BufferGeometry();
   const particlesCount = 300;
   const posArray = new Float32Array(particlesCount * 3);
-
   for (let i = 0; i < particlesCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 400; 
+    posArray[i] = (Math.random() - 0.5) * 400;
   }
-  
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
-  const particlesMaterial = new THREE.PointsMaterial({
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new Float32BufferAttribute(posArray, 3));
+
+  const material = new PointsMaterial({
     size: 2.5,
-    color: 0x10b981, 
+    color: 0x10b981,
     transparent: true,
     opacity: 0.8,
-    blending: THREE.AdditiveBlending
+    blending: AdditiveBlending,
   });
 
-  const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particlesMesh);
+  const points = new Points(geometry, material);
+  scene.add(points);
 
   let mouseX = 0;
   let mouseY = 0;
-  
-  document.addEventListener('mousemove', (event) => {
-    mouseX = (event.clientX / window.innerWidth) - 0.5;
-    mouseY = (event.clientY / window.innerHeight) - 0.5;
-  });
+  let isVisible = false;
+  let animationFrameId: number | null = null;
+  let lastTime: number | null = null;
 
-  const clock = new THREE.Clock();
-  
-  // Zmienne do kontroli animacji
-  let isCanvasVisible = false;
-  let animationFrameId: number;
+  const onMouseMove = (e: MouseEvent) => {
+    mouseX = (e.clientX / window.innerWidth) - 0.5;
+    mouseY = (e.clientY / window.innerHeight) - 0.5;
+  };
 
-  function animate() {
-    // Zatrzymaj całkowicie pętlę, jeśli canvas jest niewidoczny
-    if (!isCanvasVisible) return;
-    
+  function resize() {
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+
+  function animate(time: number) {
+    if (!isVisible) {
+      animationFrameId = null;
+      lastTime = null;
+      return;
+    }
+
     animationFrameId = requestAnimationFrame(animate);
-    const elapsedTime = clock.getElapsedTime();
 
-    particlesMesh.rotation.y = elapsedTime * 0.05;
-    particlesMesh.rotation.x = elapsedTime * 0.02;
+    if (lastTime === null) {
+      lastTime = time;
+      return;
+    }
 
-    particlesMesh.position.x += (mouseX * 20 - particlesMesh.position.x) * 0.05;
-    particlesMesh.position.y += (-mouseY * 20 - particlesMesh.position.y) * 0.05;
+    const dt = (time - lastTime) / 1000;
+    lastTime = time;
+
+    // Incremental rotation — no jump on re-entry
+    points.rotation.y += 0.05 * dt;
+    points.rotation.x += 0.02 * dt;
+
+    // Smooth mouse parallax
+    points.position.x += (mouseX * 20 - points.position.x) * 0.05;
+    points.position.y += (-mouseY * 20 - points.position.y) * 0.05;
 
     renderer.render(scene, camera);
   }
 
-  // Obserwator wydajności (Performance Observer)
+  // Pause/resume animation based on canvas visibility
   const canvasObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        if (!isCanvasVisible) {
-          isCanvasVisible = true;
-          clock.start(); // Restartujemy zegar, aby uniknąć nagłych "przeskoków" rotacji
-          animate();
+    for (const entry of entries) {
+      if (entry.isIntersecting && !isVisible) {
+        isVisible = true;
+        document.addEventListener('mousemove', onMouseMove);
+        animationFrameId = requestAnimationFrame(animate);
+      } else if (!entry.isIntersecting && isVisible) {
+        isVisible = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
         }
-      } else {
-        isCanvasVisible = false;
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId); // Czyste przerwanie działania
-        }
+        lastTime = null;
       }
-    });
-  }, { threshold: 0 }); // threshold: 0 oznacza "odpal, gdy chociaż 1 pixel jest widoczny / ukryty"
+    }
+  }, { threshold: 0 });
 
   canvasObserver.observe(canvas);
 
-  // Responsywność
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+  resize();
+  window.addEventListener('resize', resize);
 }
 
 // --- Init ---
 const langLabel = document.getElementById('lang-label');
 if (langLabel) langLabel.textContent = locale.toUpperCase();
 updateTexts();
-initWebGLBackground(); // Uruchomienie WebGL po załadowaniu skryptu
+initWebGLBackground();
+
