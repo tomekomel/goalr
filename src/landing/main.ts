@@ -1,4 +1,5 @@
 import './style.css';
+import * as THREE from 'three';
 
 // --- i18n ---
 const translations: Record<string, Record<string, string>> = {
@@ -158,7 +159,7 @@ window.addEventListener('scroll', () => {
   nav?.classList.toggle('navbar-scrolled', window.scrollY > 50);
 });
 
-// --- Intersection Observer for scroll animations ---
+// --- Intersection Observer for scroll animations (Teksty i UI) ---
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -180,7 +181,102 @@ document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach(a => {
   });
 });
 
+// --- WebGL Background Animation: Goal Network (Z optymalizacją) ---
+function initWebGLBackground() {
+  const canvas = document.getElementById('hero-webgl-canvas') as HTMLCanvasElement;
+  if (!canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  // Kaganiec na rozdzielczość dla telefonów z mocnymi ekranami
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 150;
+
+  // Tworzenie "Zadań/Celów" jako cząsteczek
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesCount = 300;
+  const posArray = new Float32Array(particlesCount * 3);
+
+  for (let i = 0; i < particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 400; 
+  }
+  
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 2.5,
+    color: 0x10b981, 
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending
+  });
+
+  const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particlesMesh);
+
+  let mouseX = 0;
+  let mouseY = 0;
+  
+  document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX / window.innerWidth) - 0.5;
+    mouseY = (event.clientY / window.innerHeight) - 0.5;
+  });
+
+  const clock = new THREE.Clock();
+  
+  // Zmienne do kontroli animacji
+  let isCanvasVisible = false;
+  let animationFrameId: number;
+
+  function animate() {
+    // Zatrzymaj całkowicie pętlę, jeśli canvas jest niewidoczny
+    if (!isCanvasVisible) return;
+    
+    animationFrameId = requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+
+    particlesMesh.rotation.y = elapsedTime * 0.05;
+    particlesMesh.rotation.x = elapsedTime * 0.02;
+
+    particlesMesh.position.x += (mouseX * 20 - particlesMesh.position.x) * 0.05;
+    particlesMesh.position.y += (-mouseY * 20 - particlesMesh.position.y) * 0.05;
+
+    renderer.render(scene, camera);
+  }
+
+  // Obserwator wydajności (Performance Observer)
+  const canvasObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (!isCanvasVisible) {
+          isCanvasVisible = true;
+          clock.start(); // Restartujemy zegar, aby uniknąć nagłych "przeskoków" rotacji
+          animate();
+        }
+      } else {
+        isCanvasVisible = false;
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId); // Czyste przerwanie działania
+        }
+      }
+    });
+  }, { threshold: 0 }); // threshold: 0 oznacza "odpal, gdy chociaż 1 pixel jest widoczny / ukryty"
+
+  canvasObserver.observe(canvas);
+
+  // Responsywność
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+}
+
 // --- Init ---
 const langLabel = document.getElementById('lang-label');
 if (langLabel) langLabel.textContent = locale.toUpperCase();
 updateTexts();
+initWebGLBackground(); // Uruchomienie WebGL po załadowaniu skryptu
