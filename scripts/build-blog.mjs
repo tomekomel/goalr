@@ -32,13 +32,11 @@ function formatDate(dateStr) {
 
 function renderPostCard(post) {
   return `
-        <a href="/blog/${post.slug}/" class="landing-animate step-card group rounded-2xl bg-slate-900/60 border border-slate-800 hover:border-emerald-500/30 p-6 transition-all block">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">${post.category}</span>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">${post.title}</h3>
-          <p class="text-sm text-slate-400 line-clamp-2 mb-4">${post.excerpt}</p>
-          <div class="flex items-center gap-2 text-xs text-slate-500">
+        <a href="/blog/${post.slug}/" class="landing-animate blog-card group rounded-2xl p-6 block transition-all" style="background:#141513;border:1px solid rgba(255,255,255,0.08)">
+          <span class="inline-flex px-2.5 py-1 rounded-md text-xs font-semibold mb-4 block" style="color:#22c55e;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.14)">${post.category}</span>
+          <h3 class="text-base font-bold mb-2 leading-snug" style="color:#ece9e0">${post.title}</h3>
+          <p class="text-sm leading-relaxed mb-4 line-clamp-2" style="color:#585552">${post.excerpt}</p>
+          <div class="flex items-center gap-2 text-xs" style="color:#585552">
             <span>${formatDate(post.date)}</span>
             <span>&middot;</span>
             <span>${post.readTime} min read</span>
@@ -94,24 +92,17 @@ const previewCards = previewPosts.map(renderPostCard).join('\n');
 
 const blogPreviewSection = `<!-- BLOG_PREVIEW_START -->
   <!-- ========== BLOG PREVIEW ========== -->
-  <section class="py-24 md:py-32">
-    <div class="max-w-5xl mx-auto px-6">
-      <h2 class="landing-animate text-3xl md:text-4xl font-extrabold text-white text-center tracking-tight mb-4" data-i18n="blog.sectionTitle">
-        The Goal-Setting Playbook
-      </h2>
-      <p class="landing-animate text-slate-400 text-center text-lg mb-16 max-w-2xl mx-auto" data-i18n="blog.sectionSubtitle">
-        Actionable insights to help you plan smarter and achieve more.
-      </p>
-
-      <div class="grid md:grid-cols-3 gap-6">
-${previewCards}
+  <section class="py-20 md:py-28" style="background:#0e0f0d">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex items-end justify-between mb-10 gap-6">
+        <div>
+          <p class="reveal text-xs font-bold uppercase tracking-widest mb-2" style="color:#22c55e" data-i18n="blog.label">The Playbook</p>
+          <h2 class="reveal text-2xl md:text-3xl font-black tracking-tight" style="font-family:'Fraunces',Georgia,serif;color:#ece9e0" data-i18n="blog.sectionTitle">From the goal-setting playbook</h2>
+        </div>
+        <a href="/blog/" class="reveal shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold transition-colors" style="color:#22c55e" data-i18n="blog.allPosts">Read all posts</a>
       </div>
-
-      <div class="landing-animate text-center mt-10">
-        <a href="/blog/" class="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 font-semibold transition-colors">
-          <span data-i18n="blog.allPosts">View all posts</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        </a>
+      <div class="grid md:grid-cols-3 gap-5">
+${previewCards}
       </div>
     </div>
   </section>
