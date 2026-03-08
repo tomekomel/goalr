@@ -9,11 +9,11 @@
    DESIGN TOKENS
    ============================================================ */
 :root {
-  --bg:           #0b0c0a;
-  --bg-2:         #141513;
-  --bg-3:         #1d1f1b;
-  --surface:      #1a1c18;
-  --surface-hi:   #22241f;
+  --bg:           #141614;
+  --bg-2:         #191c16;
+  --bg-3:         #23261f;
+  --surface:      #20231d;
+  --surface-hi:   #272a23;
   --text:         #ece9e0;
   --text-2:       #9a9690;
   --text-3:       #585552;
@@ -293,8 +293,8 @@ body { background: var(--bg); color: var(--text); }
   background: conic-gradient(
     var(--green) 0deg,
     var(--green) var(--progress, 240deg),
-    #2a2e27 var(--progress, 240deg),
-    #2a2e27 360deg
+    #2f3329 var(--progress, 240deg),
+    #2f3329 360deg
   );
 }
 .progress-ring-inner {

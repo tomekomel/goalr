@@ -41,15 +41,15 @@ const onDragChange = () => {
 };
 
 const containerClasses = {
-  'default': 'bg-slate-100/50 dark:bg-slate-800/50 border-slate-200/50 dark:border-slate-700/50 p-3',
+  'default': 'bg-stone-100/50 dark:bg-[#181c22]/50 border-stone-200/50 dark:border-[rgba(255,255,255,0.065)] p-3',
   'highlight': 'bg-transparent border-transparent py-3 px-0',
-  'compact': 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 p-4',
+  'compact': 'bg-white dark:bg-[#1e2229] border-stone-100 dark:border-[rgba(255,255,255,0.065)] p-4',
 };
 
 const headerClasses = {
-  'default': 'text-slate-700 dark:text-slate-300',
-  'highlight': 'text-slate-900 dark:text-slate-100',
-  'compact': 'text-slate-500 dark:text-slate-400 text-sm uppercase tracking-wide',
+  'default': 'text-[#2a2f38] dark:text-[#9299a6]',
+  'highlight': 'text-[#1e2229] dark:text-[#e2e4ed]',
+  'compact': 'text-[#9299a6] text-sm uppercase tracking-wide',
 };
 
 const gridClasses = {
@@ -71,11 +71,11 @@ const gridClasses = {
   >
     <div class="flex items-center justify-between mb-2.5 px-1">
       <h2 class="font-semibold text-sm flex items-center gap-1.5" :class="headerClasses[variant]">
-        <Target v-if="variant === 'highlight'" :size="16" class="text-emerald-600" />
+        <Target v-if="variant === 'highlight'" :size="16" class="text-[#22c55e]" />
         {{ title }}
-        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded-full">{{ t('column.current') }}</span>
+        <span v-if="isCurrentWeek" class="text-[10px] font-semibold text-[#22c55e] bg-[#22c55e]/10 px-1.5 py-0.5 rounded-full">{{ t('column.current') }}</span>
       </h2>
-      <span class="bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-400 border border-slate-200 dark:border-slate-700">
+      <span class="bg-white dark:bg-[#1e2229] px-2 py-0.5 rounded-full text-[10px] font-semibold text-[#9299a6] border border-stone-200 dark:border-[rgba(255,255,255,0.065)]">
         {{ localGoals.length }}
       </span>
     </div>
@@ -99,8 +99,8 @@ const gridClasses = {
       </template>
       <template #footer>
         <div v-if="localGoals.length === 0" class="col-span-full flex flex-col items-center justify-center py-5 text-center">
-          <Inbox :size="22" class="text-slate-300 dark:text-slate-600 mb-1.5" />
-          <p class="text-xs text-slate-400 dark:text-slate-500 font-medium">{{ emptyMessage }}</p>
+          <Inbox :size="22" class="text-stone-300 dark:text-[#585552] mb-1.5" />
+          <p class="text-xs text-[#9299a6] dark:text-[#585552] font-medium">{{ emptyMessage }}</p>
         </div>
       </template>
     </draggable>

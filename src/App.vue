@@ -235,11 +235,11 @@ const monthStats = computed(() => calcStats([...monthlyGoals.value, ...weeklyGoa
 const yearStats = computed(() => calcStats(yearlyGoals.value));
 
 const donutBg = (stats: { total: number; done: number; inProgress: number }) => {
-  const trackColor = isDark.value ? '#334155' : '#e2e8f0';
+  const trackColor = isDark.value ? '#2a2f38' : '#d8d8d3';
   if (stats.total === 0) return trackColor;
   const doneP = (stats.done / stats.total) * 100;
   const ipP = (stats.inProgress / stats.total) * 100;
-  return `conic-gradient(#10b981 0% ${doneP}%, #8b5cf6 ${doneP}% ${doneP + ipP}%, ${trackColor} ${doneP + ipP}% 100%)`;
+  return `conic-gradient(#22c55e 0% ${doneP}%, #0ea5e9 ${doneP}% ${doneP + ipP}%, ${trackColor} ${doneP + ipP}% 100%)`;
 };
 
 const updateGoals = async (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
@@ -500,7 +500,7 @@ const handlePulseEdit = (goal: Goal) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 dark:bg-slate-900">
+  <div class="min-h-screen bg-[#f5f5f0] dark:bg-[#0f1115]">
     <div v-if="session" class="pb-20">
       <!-- Header -->
       <header class="max-w-7xl mx-auto px-6 pt-6 sm:pt-8 pb-5">
@@ -514,15 +514,15 @@ const handlePulseEdit = (goal: Goal) => {
                   <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
                 </svg>
               </div>
-              <h1 class="text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tighter">goalr.</h1>
+              <h1 class="text-3xl font-black text-[#1e2229] dark:text-[#e2e4ed] tracking-tighter">goalr.</h1>
             </div>
-            <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">{{ t('app.tagline') }}</p>
+            <p class="text-[#9299a6] font-medium text-sm">{{ t('app.tagline') }}</p>
           </div>
 
           <div class="flex items-center gap-3">
             <button
               @click="openAddModal"
-              class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-emerald-200 dark:shadow-emerald-900/20 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-[#22c55e] hover:bg-[#16a34a] text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-[#22c55e]/20 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Plus :size="16" />
               {{ t('app.addGoal') }}
@@ -530,7 +530,7 @@ const handlePulseEdit = (goal: Goal) => {
 
             <button
               @click="isArchitectOpen = true"
-              class="bg-white dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-white dark:bg-[#1e2229] hover:bg-amber-50 dark:hover:bg-[#242830] text-amber-600 dark:text-amber-400 px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm border border-stone-200 dark:border-[rgba(255,255,255,0.065)] flex items-center gap-1.5 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Sparkles :size="16" />
               AI
@@ -538,7 +538,7 @@ const handlePulseEdit = (goal: Goal) => {
 
             <button
               @click="toggleDark"
-              class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-white dark:bg-[#1e2229] hover:bg-stone-50 dark:hover:bg-[#242830] text-[#9299a6] px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-stone-200 dark:border-[rgba(255,255,255,0.065)] cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
               :aria-label="isDark ? t('app.switchToLight') : t('app.switchToDark')"
             >
               <Sun v-if="isDark" :size="16" />
@@ -547,7 +547,7 @@ const handlePulseEdit = (goal: Goal) => {
 
             <button
               @click="toggleLocale"
-              class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-white dark:bg-[#1e2229] hover:bg-stone-50 dark:hover:bg-[#242830] text-[#9299a6] px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-stone-200 dark:border-[rgba(255,255,255,0.065)] cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
               aria-label="Toggle language"
             >
               <span class="text-xs font-bold">{{ locale === 'en' ? 'EN' : 'PL' }}</span>
@@ -555,7 +555,7 @@ const handlePulseEdit = (goal: Goal) => {
 
             <button
               @click="handleSignOut"
-              class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-white dark:bg-[#1e2229] hover:bg-stone-50 dark:hover:bg-[#242830] text-[#9299a6] px-3 py-2.5 rounded-xl font-semibold transition-all shadow-sm border border-stone-200 dark:border-[rgba(255,255,255,0.065)] cursor-pointer flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary"
               :aria-label="t('app.signOut')"
             >
               <LogOut :size="16" />
@@ -572,8 +572,8 @@ const handlePulseEdit = (goal: Goal) => {
             class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-primary"
             :class="[
               currentView === view.id
-                ? 'text-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/50'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100/50 dark:hover:bg-slate-800/50'
+                ? 'text-[#22c55e] bg-[#22c55e]/10'
+                : 'text-[#9299a6] hover:text-[#2a2f38] dark:hover:text-[#e2e4ed] hover:bg-stone-100/50 dark:hover:bg-[#1e2229]/50'
             ]"
           >
             <component :is="view.icon" :size="14" />
@@ -586,31 +586,31 @@ const handlePulseEdit = (goal: Goal) => {
       <main v-if="isLoading" class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
           <div class="xl:col-span-3 space-y-3">
-            <div class="h-6 w-40 bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-3"></div>
-            <div class="bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-4 space-y-4">
+            <div class="h-6 w-40 bg-stone-200 dark:bg-[#242830] rounded animate-pulse mb-3"></div>
+            <div class="bg-stone-100/50 dark:bg-[#181c22]/50 rounded-xl border border-stone-200/50 dark:border-[rgba(255,255,255,0.065)] p-4 space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                <div v-for="i in 3" :key="i" class="bg-white dark:bg-slate-800 rounded-lg p-3.5 space-y-2">
-                  <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
-                  <div class="h-3 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse w-1/2"></div>
+                <div v-for="i in 3" :key="i" class="bg-white dark:bg-[#1e2229] rounded-lg p-3.5 space-y-2">
+                  <div class="h-4 bg-stone-200 dark:bg-[#242830] rounded animate-pulse w-3/4"></div>
+                  <div class="h-3 bg-stone-100 dark:bg-[#242830]/50 rounded animate-pulse w-1/2"></div>
                 </div>
               </div>
-              <div v-for="w in 2" :key="w" class="bg-white dark:bg-slate-800 rounded-lg p-3">
-                <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-16 mb-2"></div>
+              <div v-for="w in 2" :key="w" class="bg-white dark:bg-[#1e2229] rounded-lg p-3">
+                <div class="h-3 bg-stone-200 dark:bg-[#242830] rounded animate-pulse w-16 mb-2"></div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                  <div v-for="j in 2" :key="j" class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3.5 space-y-2">
-                    <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-2/3"></div>
-                    <div class="h-3 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse w-1/3"></div>
+                  <div v-for="j in 2" :key="j" class="bg-stone-50 dark:bg-[#1e2229]/50 rounded-lg p-3.5 space-y-2">
+                    <div class="h-4 bg-stone-200 dark:bg-[#242830] rounded animate-pulse w-2/3"></div>
+                    <div class="h-3 bg-stone-100 dark:bg-[#242830]/50 rounded animate-pulse w-1/3"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="xl:col-span-1">
-            <div class="h-6 w-28 bg-slate-200 dark:bg-slate-700 rounded animate-pulse mb-3"></div>
-            <div class="bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-3 space-y-2">
-              <div v-for="i in 2" :key="i" class="bg-white dark:bg-slate-800 rounded-lg p-3.5 space-y-2">
-                <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
-                <div class="h-3 bg-slate-100 dark:bg-slate-700/50 rounded animate-pulse w-1/2"></div>
+            <div class="h-6 w-28 bg-stone-200 dark:bg-[#242830] rounded animate-pulse mb-3"></div>
+            <div class="bg-stone-100/50 dark:bg-[#181c22]/50 rounded-xl border border-stone-200/50 dark:border-[rgba(255,255,255,0.065)] p-3 space-y-2">
+              <div v-for="i in 2" :key="i" class="bg-white dark:bg-[#1e2229] rounded-lg p-3.5 space-y-2">
+                <div class="h-4 bg-stone-200 dark:bg-[#242830] rounded animate-pulse w-3/4"></div>
+                <div class="h-3 bg-stone-100 dark:bg-[#242830]/50 rounded animate-pulse w-1/2"></div>
               </div>
             </div>
           </div>
@@ -620,13 +620,13 @@ const handlePulseEdit = (goal: Goal) => {
       <!-- Backlog (flat grid) -->
       <main v-else-if="currentView === 'backlog'" class="max-w-7xl mx-auto px-6">
         <div class="mb-4">
-          <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ t('app.backlogTitle') }}</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{{ t('app.backlogDesc') }}</p>
+          <h2 class="text-lg font-bold text-[#1e2229] dark:text-[#e2e4ed]">{{ t('app.backlogTitle') }}</h2>
+          <p class="text-xs text-[#9299a6] mt-0.5">{{ t('app.backlogDesc') }}</p>
         </div>
 
         <div v-if="backlogGoals.length === 0" class="flex flex-col items-center justify-center py-16 text-center">
-          <Inbox :size="32" class="text-slate-300 dark:text-slate-600 mb-2" />
-          <p class="text-sm text-slate-400 dark:text-slate-500 font-medium">{{ t('app.backlogEmpty') }}</p>
+          <Inbox :size="32" class="text-stone-300 dark:text-[#585552] mb-2" />
+          <p class="text-sm text-[#9299a6] dark:text-[#585552] font-medium">{{ t('app.backlogEmpty') }}</p>
         </div>
 
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -648,43 +648,43 @@ const handlePulseEdit = (goal: Goal) => {
           <!-- LEFT COLUMN: Current Month (3/4 width) -->
           <div class="space-y-3" :class="showYearlyColumn ? 'xl:col-span-3' : 'xl:col-span-1'">
              <div class="flex items-center gap-2 mb-3">
-                <button @click="navigateMonth(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.prevMonth')">
+                <button @click="navigateMonth(-1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors text-[#9299a6]" :aria-label="t('app.prevMonth')">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ currentMonthName }} <span class="text-emerald-600">{{ currentYear }}</span></h2>
-                <button @click="navigateMonth(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.nextMonth')">
+                <h2 class="text-lg font-bold text-[#1e2229] dark:text-[#e2e4ed]">{{ currentMonthName }} <span class="text-[#22c55e]">{{ currentYear }}</span></h2>
+                <button @click="navigateMonth(1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors text-[#9299a6]" :aria-label="t('app.nextMonth')">
                   <ChevronRight :size="18" />
                 </button>
                 <button
                   v-if="!isCurrentMonth"
                   @click="goToToday"
-                  class="ml-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-1 rounded-md hover:bg-emerald-100 dark:hover:bg-emerald-950 transition-colors"
+                  class="ml-1 text-[10px] font-bold text-[#22c55e] bg-[#22c55e]/10 px-2 py-1 rounded-md hover:bg-[#22c55e]/20 transition-colors"
                 >
                   {{ t('app.today') }}
                 </button>
              </div>
 
-             <div class="bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 flex flex-col gap-5">
+             <div class="bg-stone-100/50 dark:bg-[#181c22]/50 rounded-xl border border-stone-200/50 dark:border-[rgba(255,255,255,0.065)] flex flex-col gap-5">
                <!-- Month Stats Bar -->
-               <div v-if="monthStats.total > 0" class="flex items-center gap-3 mx-4 mt-4 px-3 py-2 bg-white/60 dark:bg-slate-800/60 rounded-lg border border-slate-100 dark:border-slate-700">
+               <div v-if="monthStats.total > 0" class="flex items-center gap-3 mx-4 mt-4 px-3 py-2 bg-white/60 dark:bg-[#1e2229]/60 rounded-lg border border-stone-100 dark:border-[rgba(255,255,255,0.065)]">
                  <div class="relative w-8 h-8 rounded-full shrink-0 transition-all duration-500" :style="{ background: donutBg(monthStats) }">
-                   <div class="absolute inset-[5px] rounded-full bg-white/90 dark:bg-slate-800/90"></div>
-                   <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-slate-600 dark:text-slate-300">{{ monthStats.pct }}</span>
+                   <div class="absolute inset-[5px] rounded-full bg-white/90 dark:bg-[#1e2229]/90"></div>
+                   <span class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-[#585552] dark:text-[#9299a6]">{{ monthStats.pct }}</span>
                  </div>
-                 <div class="flex items-center gap-2 text-[11px] font-medium text-slate-400 dark:text-slate-500 flex-wrap">
+                 <div class="flex items-center gap-2 text-[11px] font-medium text-[#9299a6] dark:text-[#585552] flex-wrap">
                    <span>{{ monthStats.total }} {{ t('app.total') }}</span>
-                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-emerald-600">{{ monthStats.done }} {{ t('app.done') }}</span>
-                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-violet-600 dark:text-violet-400">{{ monthStats.inProgress }} {{ t('app.inProgress') }}</span>
-                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-blue-600">{{ monthStats.toDo }} {{ t('app.toDo') }}</span>
+                   <span class="text-stone-200 dark:text-[#2a2f38]">&middot;</span>
+                   <span class="text-[#22c55e]">{{ monthStats.done }} {{ t('app.done') }}</span>
+                   <span class="text-stone-200 dark:text-[#2a2f38]">&middot;</span>
+                   <span class="text-sky-500 dark:text-sky-400">{{ monthStats.inProgress }} {{ t('app.inProgress') }}</span>
+                   <span class="text-stone-200 dark:text-[#2a2f38]">&middot;</span>
+                   <span class="text-blue-500">{{ monthStats.toDo }} {{ t('app.toDo') }}</span>
                  </div>
                  <div class="ml-auto flex items-center gap-2 shrink-0">
-                   <div class="w-20 h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                     <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: monthStats.pct + '%' }"></div>
+                   <div class="w-20 h-1.5 bg-stone-100 dark:bg-[#242830] rounded-full overflow-hidden">
+                     <div class="h-full bg-gradient-to-r from-[#22c55e] to-emerald-400 rounded-full transition-all duration-700" :style="{ width: monthStats.pct + '%' }"></div>
                    </div>
-                   <span class="text-[11px] font-semibold text-emerald-600">{{ monthStats.pct }}%</span>
+                   <span class="text-[11px] font-semibold text-[#22c55e]">{{ monthStats.pct }}%</span>
                  </div>
                </div>
 
@@ -725,23 +725,23 @@ const handlePulseEdit = (goal: Goal) => {
           <!-- RIGHT COLUMN: Current Year (1/4 width) -->
           <div v-if="showYearlyColumn" class="xl:col-span-1 space-y-3">
               <div class="flex items-center gap-2 mb-3">
-                <button @click="navigateYear(-1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.prevYear')">
+                <button @click="navigateYear(-1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors text-[#9299a6]" :aria-label="t('app.prevYear')">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-slate-800 dark:text-slate-200">{{ t('app.yearLabel') }} <span class="text-indigo-600">{{ currentYearForYearly }}</span></h2>
-                <button @click="navigateYear(1)" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400" :aria-label="t('app.nextYear')">
+                <h2 class="text-lg font-bold text-[#1e2229] dark:text-[#e2e4ed]">{{ t('app.yearLabel') }} <span class="text-teal-500">{{ currentYearForYearly }}</span></h2>
+                <button @click="navigateYear(1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors text-[#9299a6]" :aria-label="t('app.nextYear')">
                   <ChevronRight :size="18" />
                 </button>
                 <button
                   v-if="!isCurrentYear"
                   @click="goToToday"
-                  class="ml-1 text-[10px] font-bold text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-1 rounded-md hover:bg-indigo-100 dark:hover:bg-indigo-950 transition-colors"
+                  class="ml-1 text-[10px] font-bold text-teal-500 bg-teal-50 dark:bg-teal-950/30 px-2 py-1 rounded-md hover:bg-teal-100 dark:hover:bg-teal-950/50 transition-colors"
                 >
                   {{ t('app.today') }}
                 </button>
                 <button
                   @click="toggleYearlyColumn"
-                  class="ml-auto p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  class="ml-auto p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors text-[#9299a6] hover:text-[#585552] dark:hover:text-[#9299a6]"
                   :aria-label="t('app.collapseYearly')"
                 >
                   <ChevronsRight :size="16" />
@@ -749,19 +749,19 @@ const handlePulseEdit = (goal: Goal) => {
               </div>
 
              <!-- Year Stats Bar -->
-             <div v-if="yearStats.total > 0" class="flex items-center gap-2.5 px-3 py-2 bg-slate-100/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/50 dark:border-slate-700/50 mb-1">
+             <div v-if="yearStats.total > 0" class="flex items-center gap-2.5 px-3 py-2 bg-stone-100/50 dark:bg-[#181c22]/50 rounded-lg border border-stone-200/50 dark:border-[rgba(255,255,255,0.065)] mb-1">
                <div class="relative w-7 h-7 rounded-full shrink-0 transition-all duration-500" :style="{ background: donutBg(yearStats) }">
-                 <div class="absolute inset-[5px] rounded-full bg-white/90 dark:bg-slate-800/90"></div>
-                 <span class="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-slate-600 dark:text-slate-300">{{ yearStats.pct }}</span>
+                 <div class="absolute inset-[5px] rounded-full bg-white/90 dark:bg-[#1e2229]/90"></div>
+                 <span class="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-[#585552] dark:text-[#9299a6]">{{ yearStats.pct }}</span>
                </div>
                <div class="flex flex-col gap-1 flex-1 min-w-0">
-                 <div class="flex items-center gap-1.5 text-[10px] font-medium text-slate-400 dark:text-slate-500 flex-wrap">
-                   <span class="text-emerald-600">{{ yearStats.done }}<span class="text-slate-300 dark:text-slate-600">/</span>{{ yearStats.total }}</span>
-                   <span class="text-slate-200 dark:text-slate-600">&middot;</span>
-                   <span class="text-violet-500 dark:text-violet-400">{{ yearStats.inProgress }} {{ t('app.wip') }}</span>
+                 <div class="flex items-center gap-1.5 text-[10px] font-medium text-[#9299a6] dark:text-[#585552] flex-wrap">
+                   <span class="text-[#22c55e]">{{ yearStats.done }}<span class="text-stone-300 dark:text-[#2a2f38]">/</span>{{ yearStats.total }}</span>
+                   <span class="text-stone-200 dark:text-[#2a2f38]">&middot;</span>
+                   <span class="text-sky-500 dark:text-sky-400">{{ yearStats.inProgress }} {{ t('app.wip') }}</span>
                  </div>
-                 <div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                   <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-700" :style="{ width: yearStats.pct + '%' }"></div>
+                 <div class="w-full h-1 bg-stone-100 dark:bg-[#242830] rounded-full overflow-hidden">
+                   <div class="h-full bg-gradient-to-r from-[#22c55e] to-emerald-400 rounded-full transition-all duration-700" :style="{ width: yearStats.pct + '%' }"></div>
                  </div>
                </div>
              </div>
@@ -782,10 +782,10 @@ const handlePulseEdit = (goal: Goal) => {
           <div
             v-else
             @click="toggleYearlyColumn"
-            class="hidden xl:flex flex-col items-center gap-3 pt-3 w-10 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 rounded-xl cursor-pointer hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors"
+            class="hidden xl:flex flex-col items-center gap-3 pt-3 w-10 bg-stone-100/50 dark:bg-[#181c22]/50 border border-stone-200/50 dark:border-[rgba(255,255,255,0.065)] rounded-xl cursor-pointer hover:bg-stone-200/50 dark:hover:bg-[#242830]/50 transition-colors"
           >
-            <ChevronLeft :size="16" class="text-slate-400 shrink-0" />
-            <span class="text-xs font-semibold text-slate-400 [writing-mode:vertical-lr]">{{ t('app.yearly') }}</span>
+            <ChevronLeft :size="16" class="text-[#9299a6] shrink-0" />
+            <span class="text-xs font-semibold text-[#9299a6] [writing-mode:vertical-lr]">{{ t('app.yearly') }}</span>
           </div>
 
         </div>

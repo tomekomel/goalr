@@ -43,10 +43,10 @@ onUnmounted(() => {
 });
 
 const statusConfig: Record<string, { icon: any, color: string, bg: string, barColor?: string }> = {
-  'planned': { icon: Circle, color: 'text-slate-500', bg: 'bg-slate-100 dark:bg-slate-700' },
-  'to-do': { icon: CircleDashed, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-950/50' },
-  'in-progress': { icon: Timer, color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-950/50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
-  'done': { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50 dark:bg-emerald-950/50', barColor: 'bg-gradient-to-r from-emerald-500 to-emerald-400' },
+  'planned': { icon: Circle, color: 'text-[#9299a6]', bg: 'bg-stone-100 dark:bg-[#242830]' },
+  'to-do': { icon: CircleDashed, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/40' },
+  'in-progress': { icon: Timer, color: 'text-sky-500 dark:text-sky-400', bg: 'bg-sky-50 dark:bg-sky-950/40', barColor: 'bg-gradient-to-r from-[#22c55e] to-emerald-400' },
+  'done': { icon: CheckCircle2, color: 'text-[#22c55e]', bg: 'bg-emerald-50 dark:bg-[#22c55e]/10', barColor: 'bg-gradient-to-r from-[#22c55e] to-emerald-400' },
 };
 
 const getStatusConfig = (status: string) => {
@@ -57,11 +57,11 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
 </script>
 
 <template>
-  <div class="bg-white dark:bg-slate-800 px-3.5 py-3 rounded-lg card-shadow border border-slate-100 dark:border-slate-700 group relative hover:border-slate-200 dark:hover:border-slate-600 transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
+  <div class="bg-white dark:bg-[#1e2229] px-3.5 py-3 rounded-lg card-shadow border border-stone-100 dark:border-[rgba(255,255,255,0.065)] group relative hover:border-stone-200 dark:hover:border-[rgba(255,255,255,0.11)] transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
     <!-- Header: Title + Drag Handle -->
     <div class="flex items-center gap-1.5 mb-1.5">
-      <h3 class="font-semibold text-slate-800 dark:text-slate-200 leading-tight text-sm">{{ goal.title }}</h3>
-      <GripVertical :size="14" class="text-slate-300 dark:text-slate-600 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <h3 class="font-semibold text-[#1e2229] dark:text-[#e2e4ed] leading-tight text-sm">{{ goal.title }}</h3>
+      <GripVertical :size="14" class="text-stone-300 dark:text-[#585552] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
 
     <!-- Meta: Status & Actions -->
@@ -88,7 +88,7 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
           </button>
           <button
             @click="cancelDelete"
-            class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
+            class="text-[#9299a6] hover:text-[#585552] dark:hover:text-[#9299a6] transition-colors p-1"
             :aria-label="t('card.cancelDelete')"
           >
             <X :size="12" />
@@ -106,21 +106,21 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
           <button
             v-if="['to-do', 'in-progress'].includes(goal.status)"
             @click.stop="$emit('pulse', goal)"
-            class="text-slate-300 dark:text-slate-600 hover:text-amber-500 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
+            class="text-stone-300 dark:text-[#585552] hover:text-amber-500 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-amber-400 rounded"
             :aria-label="t('card.pulse')"
           >
             <Activity :size="12" />
           </button>
           <button
             @click="$emit('edit', goal)"
-            class="text-slate-300 dark:text-slate-600 hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
+            class="text-stone-300 dark:text-[#585552] hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
             :aria-label="t('card.editGoal')"
           >
             <Pencil :size="12" />
           </button>
           <button
             @click="startDelete"
-            class="text-slate-300 dark:text-slate-600 hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
+            class="text-stone-300 dark:text-[#585552] hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
             :aria-label="t('card.deleteGoal')"
           >
             <Trash2 :size="12" />
@@ -130,12 +130,12 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
     </div>
 
     <!-- Description -->
-    <p v-if="goal.description" class="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
+    <p v-if="goal.description" class="text-[#9299a6] text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
 
     <!-- Footer: Date -->
     <div class="flex items-center gap-1.5 pt-2 mt-auto">
-      <div class="h-1 w-1 rounded-full bg-slate-200 dark:bg-slate-600"></div>
-      <span class="text-[10px] uppercase tracking-wider font-medium text-slate-400 dark:text-slate-500">
+      <div class="h-1 w-1 rounded-full bg-stone-200 dark:bg-[#585552]"></div>
+      <span class="text-[10px] uppercase tracking-wider font-medium text-[#9299a6] dark:text-[#585552]">
         {{ new Date(goal.createdAt).toLocaleDateString(localeCode) }}
       </span>
     </div>
