@@ -91,10 +91,10 @@ const periods: GoalPeriod[] = ['weekly', 'monthly', 'yearly'];
 const statuses: GoalStatus[] = ['planned', 'to-do', 'in-progress', 'done'];
 
 const statusColors: Record<string, string> = {
-  'planned': 'bg-[#585552] border-[#585552] text-white shadow-[#585552]/30',
+  'planned': 'bg-[#637562] border-[#637562] text-white shadow-[#637562]/30',
   'to-do': 'bg-blue-500 border-blue-500 text-white shadow-blue-500/30',
   'in-progress': 'bg-sky-500 border-sky-500 text-white shadow-sky-500/30',
-  'done': 'bg-[#22c55e] border-[#22c55e] text-white shadow-[#22c55e]/30',
+  'done': 'bg-[#519872] border-[#519872] text-white shadow-[#519872]/30',
 };
 
 const formatStatus = (s: string) => t(`modal.status.${s}`);
@@ -128,10 +128,10 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="$emit('close')"></div>
 
-    <div class="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white dark:bg-[#1e2229] rounded-3xl shadow-2xl p-8 border border-stone-100 dark:border-[rgba(255,255,255,0.065)] animate-in fade-in zoom-in duration-200">
+    <div class="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white dark:bg-[#382933] rounded-3xl shadow-2xl p-8 border border-stone-100 dark:border-[rgba(255,255,255,0.065)] animate-in fade-in zoom-in duration-200">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-[#1e2229] dark:text-[#e2e4ed]">{{ goal ? t('modal.editGoal') : t('modal.newGoal') }}</h2>
-        <button @click="$emit('close')" class="text-[#9299a6] hover:text-[#2a2f38] dark:hover:text-[#e2e4ed] transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" :aria-label="t('modal.closeModal')">
+        <h2 class="text-2xl font-bold text-[#382933] dark:text-[#e8ede6]">{{ goal ? t('modal.editGoal') : t('modal.newGoal') }}</h2>
+        <button @click="$emit('close')" class="text-[#a4b494] hover:text-[#3b5249] dark:hover:text-[#e8ede6] transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" :aria-label="t('modal.closeModal')">
           <X :size="24" />
         </button>
       </div>
@@ -139,12 +139,12 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <!-- Title -->
         <div>
-          <label class="block text-sm font-semibold text-[#2a2f38] dark:text-[#9299a6] mb-2">{{ t('modal.goalTitle') }}</label>
+          <label class="block text-sm font-semibold text-[#3b5249] dark:text-[#a4b494] mb-2">{{ t('modal.goalTitle') }}</label>
           <input
             v-model="form.title"
             type="text"
             :placeholder="t('modal.titlePlaceholder')"
-            class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-[#181c22] border border-stone-200 dark:border-[rgba(255,255,255,0.065)] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-[#1e2229] dark:text-[#e2e4ed] placeholder-[#9299a6] dark:placeholder-[#585552]"
+            class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-[#231a1e] border border-stone-200 dark:border-[rgba(255,255,255,0.065)] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-[#382933] dark:text-[#e8ede6] placeholder-[#a4b494] dark:placeholder-[#637562]"
             required
             autoFocus
           />
@@ -152,20 +152,20 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
         <!-- Description -->
         <div>
-          <label class="block text-sm font-semibold text-[#2a2f38] dark:text-[#9299a6] mb-2">{{ t('modal.description') }}</label>
+          <label class="block text-sm font-semibold text-[#3b5249] dark:text-[#a4b494] mb-2">{{ t('modal.description') }}</label>
           <textarea
             v-model="form.description"
             rows="3"
             :placeholder="t('modal.descPlaceholder')"
-            class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-[#181c22] border border-stone-200 dark:border-[rgba(255,255,255,0.065)] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-[#1e2229] dark:text-[#e2e4ed] placeholder-[#9299a6] dark:placeholder-[#585552] resize-none"
+            class="w-full px-4 py-3 rounded-xl bg-stone-50 dark:bg-[#231a1e] border border-stone-200 dark:border-[rgba(255,255,255,0.065)] focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-[#382933] dark:text-[#e8ede6] placeholder-[#a4b494] dark:placeholder-[#637562] resize-none"
           ></textarea>
         </div>
 
         <!-- Progress Slider (Only for In-Progress) -->
         <div v-if="form.status === 'in-progress'" class="animate-in slide-in-from-top-2 fade-in duration-300">
            <div class="flex justify-between items-center mb-3">
-            <label class="block text-xs font-bold uppercase tracking-widest text-[#9299a6] dark:text-[#585552]">{{ t('modal.currentProgress') }}</label>
-            <span class="text-xs font-black text-[#22c55e]">{{ form.progress }}%</span>
+            <label class="block text-xs font-bold uppercase tracking-widest text-[#a4b494] dark:text-[#637562]">{{ t('modal.currentProgress') }}</label>
+            <span class="text-xs font-black text-[#519872]">{{ form.progress }}%</span>
            </div>
            <div class="relative flex items-center h-4">
              <input 
@@ -174,7 +174,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                 min="0" 
                 max="100" 
                 step="5"
-                class="w-full h-1 bg-stone-100 dark:bg-[#242830] rounded-full appearance-none cursor-pointer accent-[#22c55e] custom-slider"
+                class="w-full h-1 bg-stone-100 dark:bg-[#42313c] rounded-full appearance-none cursor-pointer accent-[#519872] custom-slider"
              />
            </div>
         </div>
@@ -183,7 +183,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
         <div class="grid grid-cols-1 gap-6">
           <!-- Period -->
           <div>
-            <label class="block text-sm font-semibold text-[#2a2f38] dark:text-[#9299a6] mb-2">{{ t('modal.period') }}</label>
+            <label class="block text-sm font-semibold text-[#3b5249] dark:text-[#a4b494] mb-2">{{ t('modal.period') }}</label>
             <div class="grid grid-cols-3 gap-2">
               <button
                 v-for="p in periods"
@@ -194,7 +194,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   'py-2 px-1 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border cursor-pointer',
                   form.period === p
                     ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                    : 'bg-white dark:bg-[#242830] text-[#9299a6] border-stone-200 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-300 dark:hover:border-[rgba(255,255,255,0.11)]'
+                    : 'bg-white dark:bg-[#42313c] text-[#a4b494] border-stone-200 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-300 dark:hover:border-[rgba(255,255,255,0.11)]'
                 ]"
               >
                 {{ t(`modal.period.${p}`) }}
@@ -204,7 +204,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
           <!-- Status -->
           <div>
-            <label class="block text-sm font-semibold text-[#2a2f38] dark:text-[#9299a6] mb-2">{{ t('modal.status') }}</label>
+            <label class="block text-sm font-semibold text-[#3b5249] dark:text-[#a4b494] mb-2">{{ t('modal.status') }}</label>
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="s in statuses"
@@ -215,7 +215,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   'cursor-pointer py-1.5 px-3 rounded-lg text-xs font-bold uppercase tracking-wide transition-all border shadow-sm',
                   form.status === s
                     ? statusColors[s]
-                    : 'bg-white dark:bg-[#242830] text-[#9299a6] border-stone-200 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-300 dark:hover:border-[rgba(255,255,255,0.11)]'
+                    : 'bg-white dark:bg-[#42313c] text-[#a4b494] border-stone-200 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-300 dark:hover:border-[rgba(255,255,255,0.11)]'
                 ]"
               >
                 {{ formatStatus(s) }}
@@ -227,7 +227,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
         <!-- Date Context (Week / Month / Year) -->
         <div class="space-y-4 animate-in slide-in-from-bottom-2 fade-in duration-300">
           <div v-if="form.period === 'weekly'">
-            <label class="block text-sm font-semibold text-[#2a2f38] dark:text-[#9299a6] mb-2">{{ t('modal.weekNumber') }}</label>
+            <label class="block text-sm font-semibold text-[#3b5249] dark:text-[#a4b494] mb-2">{{ t('modal.weekNumber') }}</label>
             <div class="grid grid-cols-4 gap-2">
               <button
                 v-for="w in 4"
@@ -238,7 +238,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   'py-2 rounded-lg text-xs font-bold transition-all border cursor-pointer',
                   form.weekNumber === w
                     ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                    : 'bg-white dark:bg-[#242830] text-[#9299a6] border-stone-200 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-300 dark:hover:border-[rgba(255,255,255,0.11)]'
+                    : 'bg-white dark:bg-[#42313c] text-[#a4b494] border-stone-200 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-300 dark:hover:border-[rgba(255,255,255,0.11)]'
                 ]"
               >
                 {{ t('modal.week', w) }}
@@ -247,18 +247,18 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-[#2a2f38] dark:text-[#9299a6] mb-2">
+            <label class="block text-sm font-semibold text-[#3b5249] dark:text-[#a4b494] mb-2">
               {{ form.period === 'yearly' ? t('modal.selectYear') : t('modal.selectMonthYear') }}
             </label>
 
-            <div class="bg-stone-50 dark:bg-[#181c22] rounded-2xl p-4 border border-stone-200 dark:border-[rgba(255,255,255,0.065)]">
+            <div class="bg-stone-50 dark:bg-[#231a1e] rounded-2xl p-4 border border-stone-200 dark:border-[rgba(255,255,255,0.065)]">
               <!-- Year Selector -->
               <div class="flex items-center justify-between mb-4 px-2">
-                <button type="button" @click="changeYear(-1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors cursor-pointer text-[#9299a6]">
+                <button type="button" @click="changeYear(-1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#42313c] rounded-lg transition-colors cursor-pointer text-[#a4b494]">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
-                <span class="font-bold text-[#2a2f38] dark:text-[#9299a6] text-lg">{{ form.targetDate.substring(0, 4) }}</span>
-                <button type="button" @click="changeYear(1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#242830] rounded-lg transition-colors cursor-pointer text-[#9299a6]">
+                <span class="font-bold text-[#3b5249] dark:text-[#a4b494] text-lg">{{ form.targetDate.substring(0, 4) }}</span>
+                <button type="button" @click="changeYear(1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#42313c] rounded-lg transition-colors cursor-pointer text-[#a4b494]">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </button>
               </div>
@@ -273,8 +273,8 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
                   :class="[
                     'py-2 rounded-lg text-[11px] font-bold uppercase tracking-tighter transition-all border cursor-pointer',
                     currentMonthIndex === index
-                      ? 'bg-[#22c55e] text-white border-[#22c55e] shadow-sm'
-                      : 'bg-white dark:bg-[#1e2229] text-[#9299a6] border-stone-100 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-200 dark:hover:border-[rgba(255,255,255,0.11)] hover:text-[#2a2f38] dark:hover:text-[#9299a6]'
+                      ? 'bg-[#519872] text-white border-[#519872] shadow-sm'
+                      : 'bg-white dark:bg-[#382933] text-[#a4b494] border-stone-100 dark:border-[rgba(255,255,255,0.065)] hover:border-stone-200 dark:hover:border-[rgba(255,255,255,0.11)] hover:text-[#3b5249] dark:hover:text-[#a4b494]'
                   ]"
                 >
                   {{ month }}
@@ -286,7 +286,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
         <button
           type="submit"
-          class="w-full py-4 bg-[#22c55e] text-white rounded-2xl font-bold hover:bg-[#16a34a] transition-colors shadow-xl shadow-[#22c55e]/20 mt-2"
+          class="w-full py-4 bg-[#519872] text-white rounded-2xl font-bold hover:bg-[#3d7a5a] transition-colors shadow-xl shadow-[#519872]/20 mt-2"
         >
           {{ goal ? t('modal.saveChanges') : t('modal.addGoal') }}
         </button>

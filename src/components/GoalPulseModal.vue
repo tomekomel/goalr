@@ -24,7 +24,7 @@ const progressValue = ref(props.goal.progress);
 
 const accentColors = {
   none: 'bg-emerald-500',
-  low: 'bg-amber-500',
+  low: 'bg-emerald-500',
   high: 'bg-red-500',
 };
 
@@ -70,7 +70,7 @@ const handleEditGoal = () => {
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="$emit('close')"></div>
 
-    <div class="relative w-full max-w-sm bg-white dark:bg-[#1e2229] rounded-3xl shadow-2xl p-8 border border-stone-100 dark:border-[rgba(255,255,255,0.065)] animate-in fade-in zoom-in duration-200">
+    <div class="relative w-full max-w-sm bg-white dark:bg-[#382933] rounded-3xl shadow-2xl p-8 border border-stone-100 dark:border-[rgba(255,255,255,0.065)] animate-in fade-in zoom-in duration-200">
       <!-- Accent bar -->
       <div
         v-if="pulse"
@@ -81,18 +81,18 @@ const handleEditGoal = () => {
       <!-- Header -->
       <div class="flex justify-between items-center mb-6">
         <div class="flex items-center gap-2">
-          <Activity :size="20" class="text-amber-500" />
-          <h2 class="text-2xl font-bold text-[#1e2229] dark:text-[#e2e4ed]">{{ t('pulse.title') }}</h2>
+          <Activity :size="20" class="text-emerald-500" />
+          <h2 class="text-2xl font-bold text-[#382933] dark:text-[#e8ede6]">{{ t('pulse.title') }}</h2>
         </div>
-        <button @click="$emit('close')" class="text-[#9299a6] hover:text-[#2a2f38] dark:hover:text-[#e2e4ed] transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" :aria-label="t('modal.closeModal')">
+        <button @click="$emit('close')" class="text-[#a4b494] hover:text-[#3b5249] dark:hover:text-[#e8ede6] transition-colors focus-visible:ring-2 focus-visible:ring-primary rounded-lg" :aria-label="t('modal.closeModal')">
           <X :size="24" />
         </button>
       </div>
 
       <!-- State: Loading -->
       <div v-if="isLoading" class="flex flex-col items-center justify-center py-12 gap-4">
-        <Loader2 :size="32" class="text-amber-500 animate-spin" />
-        <p class="text-sm font-medium text-[#9299a6]">{{ t('pulse.loading') }}</p>
+        <Loader2 :size="32" class="text-emerald-500 animate-spin" />
+        <p class="text-sm font-medium text-[#a4b494]">{{ t('pulse.loading') }}</p>
       </div>
 
       <!-- State: Error -->
@@ -100,7 +100,7 @@ const handleEditGoal = () => {
         <p class="text-sm text-red-500 font-medium text-center">{{ t('pulse.error') }}</p>
         <button
           @click="fetchPulse"
-          class="w-full py-3 bg-stone-100 dark:bg-[#242830] text-[#585552] dark:text-[#9299a6] rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-[#2a2f38] transition-colors cursor-pointer"
+          class="w-full py-3 bg-stone-100 dark:bg-[#42313c] text-[#637562] dark:text-[#a4b494] rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-[#3b5249] transition-colors cursor-pointer"
         >
           {{ t('pulse.retry') }}
         </button>
@@ -110,33 +110,33 @@ const handleEditGoal = () => {
       <div v-else-if="pulse" class="space-y-5">
         <!-- Risk badge -->
         <div v-if="pulse.riskLevel !== 'none'" class="flex items-center gap-1.5">
-          <AlertTriangle :size="14" :class="pulse.riskLevel === 'high' ? 'text-red-500' : 'text-amber-500'" />
+          <AlertTriangle :size="14" :class="pulse.riskLevel === 'high' ? 'text-red-500' : 'text-emerald-500'" />
           <span
             class="text-xs font-bold uppercase tracking-wider"
-            :class="pulse.riskLevel === 'high' ? 'text-red-500' : 'text-amber-500'"
+            :class="pulse.riskLevel === 'high' ? 'text-red-500' : 'text-emerald-500'"
           >
             {{ pulse.riskLevel === 'high' ? t('pulse.riskHigh') : t('pulse.riskLow') }}
           </span>
         </div>
 
         <!-- Goal title -->
-        <p class="text-xs font-semibold text-[#9299a6] dark:text-[#585552] uppercase tracking-wider">{{ goal.title }}</p>
+        <p class="text-xs font-semibold text-[#a4b494] dark:text-[#637562] uppercase tracking-wider">{{ goal.title }}</p>
 
         <!-- AI message -->
-        <p class="text-sm text-[#2a2f38] dark:text-[#9299a6] leading-relaxed">{{ pulse.message }}</p>
+        <p class="text-sm text-[#3b5249] dark:text-[#a4b494] leading-relaxed">{{ pulse.message }}</p>
 
         <!-- Actions for to-do goals -->
         <div v-if="goal.status === 'to-do'" class="space-y-2 pt-2">
           <button
             @click="handleStartWorking"
-            class="w-full py-3 bg-[#22c55e] text-white rounded-2xl font-bold text-sm hover:bg-[#16a34a] transition-colors shadow-lg shadow-[#22c55e]/20 flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-3 bg-[#519872] text-white rounded-2xl font-bold text-sm hover:bg-[#3d7a5a] transition-colors shadow-lg shadow-[#519872]/20 flex items-center justify-center gap-2 cursor-pointer"
           >
             <Play :size="14" />
             {{ t('pulse.startWorking') }}
           </button>
           <button
             @click="handleEditGoal"
-            class="w-full py-3 bg-stone-100 dark:bg-[#242830] text-[#585552] dark:text-[#9299a6] rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-[#2a2f38] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-3 bg-stone-100 dark:bg-[#42313c] text-[#637562] dark:text-[#a4b494] rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-[#3b5249] transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <Pencil :size="14" />
             {{ t('pulse.editGoal') }}
@@ -148,8 +148,8 @@ const handleEditGoal = () => {
           <!-- Progress slider -->
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <label class="text-xs font-semibold text-[#9299a6]">{{ t('pulse.progress') }}</label>
-              <span class="text-xs font-bold text-[#22c55e]">{{ progressValue }}%</span>
+              <label class="text-xs font-semibold text-[#a4b494]">{{ t('pulse.progress') }}</label>
+              <span class="text-xs font-bold text-[#519872]">{{ progressValue }}%</span>
             </div>
             <input
               v-model.number="progressValue"
@@ -157,27 +157,27 @@ const handleEditGoal = () => {
               min="0"
               max="100"
               step="5"
-              class="w-full h-2 bg-stone-200 dark:bg-[#242830] rounded-full appearance-none cursor-pointer accent-[#22c55e]"
+              class="w-full h-2 bg-stone-200 dark:bg-[#42313c] rounded-full appearance-none cursor-pointer accent-[#519872]"
             />
           </div>
 
           <button
             @click="handleSaveProgress"
-            class="w-full py-3 bg-[#22c55e] text-white rounded-2xl font-bold text-sm hover:bg-[#16a34a] transition-colors shadow-lg shadow-[#22c55e]/20 flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-3 bg-[#519872] text-white rounded-2xl font-bold text-sm hover:bg-[#3d7a5a] transition-colors shadow-lg shadow-[#519872]/20 flex items-center justify-center gap-2 cursor-pointer"
           >
             <Save :size="14" />
             {{ t('pulse.saveProgress') }}
           </button>
           <button
             @click="handleMarkDone"
-            class="w-full py-3 bg-stone-100 dark:bg-[#242830] text-[#585552] dark:text-[#9299a6] rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-[#2a2f38] transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-3 bg-stone-100 dark:bg-[#42313c] text-[#637562] dark:text-[#a4b494] rounded-2xl font-bold text-sm hover:bg-stone-200 dark:hover:bg-[#3b5249] transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <CheckCircle2 :size="14" />
             {{ t('pulse.markDone') }}
           </button>
           <button
             @click="handleEditGoal"
-            class="w-full py-2 text-sm text-[#9299a6] hover:text-[#585552] dark:hover:text-[#9299a6] transition-colors cursor-pointer flex items-center justify-center gap-2"
+            class="w-full py-2 text-sm text-[#a4b494] hover:text-[#637562] dark:hover:text-[#a4b494] transition-colors cursor-pointer flex items-center justify-center gap-2"
           >
             <Pencil :size="14" />
             {{ t('pulse.editGoal') }}
