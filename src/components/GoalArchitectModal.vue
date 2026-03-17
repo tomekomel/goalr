@@ -130,7 +130,7 @@ const periodBadgeClass: Record<string, string> = {
         <button
           @click="handleGenerate"
           :disabled="!canGenerate"
-          class="w-full py-4 bg-[#5bbf80] text-white rounded-2xl font-bold hover:bg-[#45a868] transition-colors shadow-xl shadow-[#5bbf80]/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          class="w-full py-4 bg-[#5bbf80] text-white rounded-2xl font-bold hover:bg-[#45a868] transition-colors shadow-sm shadow-[#5bbf80]/10 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <Sparkles :size="16" />
           {{ t('architect.generate') }}
@@ -199,7 +199,7 @@ const periodBadgeClass: Record<string, string> = {
           <button
             @click="handleSave"
             :disabled="selectedCount === 0"
-            class="flex-1 py-3 bg-[#5bbf80] text-white rounded-2xl font-bold text-sm hover:bg-[#45a868] transition-colors shadow-lg shadow-[#5bbf80]/20 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
+            class="flex-1 py-3 bg-[#5bbf80] text-white rounded-2xl font-bold text-sm hover:bg-[#45a868] transition-colors shadow-sm shadow-[#5bbf80]/10 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
           >
             <Check :size="14" />
             {{ t('architect.addSelected') }} ({{ selectedCount }})

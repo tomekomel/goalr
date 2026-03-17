@@ -33,11 +33,11 @@ const handleLogin = async (provider: 'google' | 'facebook' | 'twitter') => {
       <!-- Header -->
       <div class="text-center mb-10">
         <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="bg-primary p-3 rounded-2xl shadow-lg shadow-primary/30 text-white">
+          <div class="bg-primary p-3 rounded-2xl shadow-md shadow-primary/20 text-white">
             <Target :size="32" />
           </div>
         </div>
-        <h1 class="text-3xl font-black text-[#222020] dark:text-[#f3ede8] tracking-tighter mb-2">goalr.</h1>
+        <h1 class="text-4xl font-black text-[#222020] dark:text-[#f3ede8] tracking-tighter mb-2">goalr.</h1>
         <p class="text-[#a09690] font-medium text-sm">{{ t('auth.tagline') }}</p>
       </div>
 

@@ -263,14 +263,14 @@ const handleAiPulse = () => {
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 mb-5">
           <div>
             <div class="flex items-center gap-3 mb-1">
-              <div class="bg-primary p-2.5 rounded-xl shadow-lg shadow-primary/30 text-white flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-7 h-7">
+              <div class="bg-primary p-2 rounded-lg shadow-md shadow-primary/20 text-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
                   <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none"/>
                   <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
                   <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
                 </svg>
               </div>
-              <h1 class="text-3xl font-black text-[#222020] dark:text-[#f3ede8] tracking-tighter">goalr.</h1>
+              <h1 class="text-4xl font-black text-[#222020] dark:text-[#f3ede8] tracking-tighter">goalr.</h1>
             </div>
             <p class="text-[#a09690] font-medium text-sm">{{ t('app.tagline') }}</p>
           </div>
@@ -278,7 +278,7 @@ const handleAiPulse = () => {
           <div class="flex items-center gap-3">
             <button
               @click="openAddModal"
-              class="bg-[#5bbf80] hover:bg-[#45a868] text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-[#5bbf80]/20 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
+              class="bg-[#5bbf80] hover:bg-[#45a868] text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm shadow-[#5bbf80]/10 flex items-center gap-1.5 cursor-pointer flex-1 sm:flex-none justify-center focus-visible:ring-2 focus-visible:ring-primary"
             >
               <Plus :size="16" />
               {{ t('app.addGoal') }}

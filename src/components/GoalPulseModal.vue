@@ -129,7 +129,7 @@ const handleEditGoal = () => {
         <div v-if="goal.status === 'to-do'" class="space-y-2 pt-2">
           <button
             @click="handleStartWorking"
-            class="w-full py-3 bg-[#5bbf80] text-white rounded-2xl font-bold text-sm hover:bg-[#45a868] transition-colors shadow-lg shadow-[#5bbf80]/20 flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-3 bg-[#5bbf80] text-white rounded-2xl font-bold text-sm hover:bg-[#45a868] transition-colors shadow-sm shadow-[#5bbf80]/10 flex items-center justify-center gap-2 cursor-pointer"
           >
             <Play :size="14" />
             {{ t('pulse.startWorking') }}
@@ -163,7 +163,7 @@ const handleEditGoal = () => {
 
           <button
             @click="handleSaveProgress"
-            class="w-full py-3 bg-[#5bbf80] text-white rounded-2xl font-bold text-sm hover:bg-[#45a868] transition-colors shadow-lg shadow-[#5bbf80]/20 flex items-center justify-center gap-2 cursor-pointer"
+            class="w-full py-3 bg-[#5bbf80] text-white rounded-2xl font-bold text-sm hover:bg-[#45a868] transition-colors shadow-sm shadow-[#5bbf80]/10 flex items-center justify-center gap-2 cursor-pointer"
           >
             <Save :size="14" />
             {{ t('pulse.saveProgress') }}

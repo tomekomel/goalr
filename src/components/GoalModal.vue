@@ -94,7 +94,7 @@ const statusColors: Record<string, string> = {
   'planned': 'bg-[#635d58] border-[#635d58] text-white shadow-[#635d58]/30',
   'to-do': 'bg-blue-500 border-blue-500 text-white shadow-blue-500/30',
   'in-progress': 'bg-sky-500 border-sky-500 text-white shadow-sky-500/30',
-  'done': 'bg-[#5bbf80] border-[#5bbf80] text-white shadow-[#5bbf80]/30',
+  'done': 'bg-[#5bbf80] border-[#5bbf80] text-white shadow-[#5bbf80]/15',
 };
 
 const formatStatus = (s: string) => t(`modal.status.${s}`);
@@ -286,7 +286,7 @@ onUnmounted(() => document.removeEventListener('keydown', handleKeydown));
 
         <button
           type="submit"
-          class="w-full py-4 bg-[#5bbf80] text-white rounded-2xl font-bold hover:bg-[#45a868] transition-colors shadow-xl shadow-[#5bbf80]/20 mt-2"
+          class="w-full py-4 bg-[#5bbf80] text-white rounded-2xl font-bold hover:bg-[#45a868] transition-colors shadow-sm shadow-[#5bbf80]/10 mt-2"
         >
           {{ goal ? t('modal.saveChanges') : t('modal.addGoal') }}
         </button>

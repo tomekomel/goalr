@@ -17,7 +17,7 @@
   --text:         #ece9e0;
   --text-2:       #9a9690;
   --text-3:       #585552;
-  --green:        #22c55e;
+  --green:        #5bbf80;
   --green-dim:    rgba(34,197,94,0.10);
   --green-border: rgba(34,197,94,0.18);
   --green-glow:   rgba(34,197,94,0.25);
@@ -98,11 +98,11 @@ body { background: var(--bg); color: var(--text); }
 .btn-shimmer {
   background: linear-gradient(
     90deg,
-    #22c55e 0%,
-    #16a34a 35%,
-    #4ade80 50%,
-    #16a34a 65%,
-    #22c55e 100%
+    #5bbf80 0%,
+    #45a868 35%,
+    #7dd49a 50%,
+    #45a868 65%,
+    #5bbf80 100%
   );
   background-size: 200% auto;
   animation: shimmer 3s linear infinite;
