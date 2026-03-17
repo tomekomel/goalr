@@ -43,10 +43,10 @@ onUnmounted(() => {
 });
 
 const statusConfig: Record<string, { icon: any, color: string, bg: string, barColor?: string }> = {
-  'planned': { icon: Circle, color: 'text-[#a4b494]', bg: 'bg-stone-100 dark:bg-[#42313c]' },
+  'planned': { icon: Circle, color: 'text-[#a09690]', bg: 'bg-stone-100 dark:bg-[#2d2a2a]' },
   'to-do': { icon: CircleDashed, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/40' },
-  'in-progress': { icon: Timer, color: 'text-sky-500 dark:text-sky-400', bg: 'bg-sky-50 dark:bg-sky-950/40', barColor: 'bg-gradient-to-r from-[#519872] to-emerald-400' },
-  'done': { icon: CheckCircle2, color: 'text-[#519872]', bg: 'bg-emerald-50 dark:bg-[#519872]/10', barColor: 'bg-gradient-to-r from-[#519872] to-emerald-400' },
+  'in-progress': { icon: Timer, color: 'text-sky-500 dark:text-sky-400', bg: 'bg-sky-50 dark:bg-sky-950/40', barColor: 'bg-gradient-to-r from-[#5bbf80] to-green-400' },
+  'done': { icon: CheckCircle2, color: 'text-[#5bbf80]', bg: 'bg-green-50 dark:bg-[#5bbf80]/10', barColor: 'bg-gradient-to-r from-[#5bbf80] to-green-400' },
 };
 
 const getStatusConfig = (status: string) => {
@@ -57,11 +57,11 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
 </script>
 
 <template>
-  <div class="bg-white dark:bg-[#382933] px-3.5 py-3 rounded-lg card-shadow border border-stone-100 dark:border-[rgba(255,255,255,0.065)] group relative hover:border-stone-200 dark:hover:border-[rgba(255,255,255,0.11)] transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
+  <div class="bg-white dark:bg-[#222020] px-3.5 py-3 rounded-lg card-shadow border border-stone-100 dark:border-[rgba(255,255,255,0.065)] group relative hover:border-stone-200 dark:hover:border-[rgba(255,255,255,0.11)] transition-colors flex flex-col h-full cursor-grab active:cursor-grabbing">
     <!-- Header: Title + Drag Handle -->
     <div class="flex items-center gap-1.5 mb-1.5">
-      <h3 class="font-semibold text-[#382933] dark:text-[#e8ede6] leading-tight text-sm">{{ goal.title }}</h3>
-      <GripVertical :size="14" class="text-stone-300 dark:text-[#637562] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <h3 class="font-semibold text-[#222020] dark:text-[#f3ede8] leading-tight text-sm">{{ goal.title }}</h3>
+      <GripVertical :size="14" class="text-stone-300 dark:text-[#635d58] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
     </div>
 
     <!-- Meta: Status & Actions -->
@@ -88,7 +88,7 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
           </button>
           <button
             @click="cancelDelete"
-            class="text-[#a4b494] hover:text-[#637562] dark:hover:text-[#a4b494] transition-colors p-1"
+            class="text-[#a09690] hover:text-[#635d58] dark:hover:text-[#a09690] transition-colors p-1"
             :aria-label="t('card.cancelDelete')"
           >
             <X :size="12" />
@@ -98,7 +98,7 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
           <button
             v-if="goal.status === 'planned'"
             @click="$emit('start', goal.id)"
-            class="text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-950 px-1.5 py-0.5 rounded transition-colors"
+            class="text-[10px] font-semibold text-green-600 bg-green-50 dark:bg-green-950/50 hover:bg-green-100 dark:hover:bg-green-950 px-1.5 py-0.5 rounded transition-colors"
             :aria-label="t('card.start')"
           >
             {{ t('card.start') }}
@@ -106,21 +106,21 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
           <button
             v-if="['to-do', 'in-progress'].includes(goal.status)"
             @click.stop="$emit('pulse', goal)"
-            class="text-stone-300 dark:text-[#637562] hover:text-emerald-500 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-emerald-400 rounded"
+            class="text-stone-300 dark:text-[#635d58] hover:text-green-500 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-green-400 rounded"
             :aria-label="t('card.pulse')"
           >
             <Activity :size="12" />
           </button>
           <button
             @click="$emit('edit', goal)"
-            class="text-stone-300 dark:text-[#637562] hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
+            class="text-stone-300 dark:text-[#635d58] hover:text-primary transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-primary rounded"
             :aria-label="t('card.editGoal')"
           >
             <Pencil :size="12" />
           </button>
           <button
             @click="startDelete"
-            class="text-stone-300 dark:text-[#637562] hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
+            class="text-stone-300 dark:text-[#635d58] hover:text-red-400 transition-colors p-0.5 focus-visible:ring-2 focus-visible:ring-red-400 rounded"
             :aria-label="t('card.deleteGoal')"
           >
             <Trash2 :size="12" />
@@ -130,12 +130,12 @@ const formatStatus = (s: string) => t(`card.status.${s}`);
     </div>
 
     <!-- Description -->
-    <p v-if="goal.description" class="text-[#a4b494] text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
+    <p v-if="goal.description" class="text-[#a09690] text-xs leading-relaxed mb-3 line-clamp-2" :title="goal.description">{{ goal.description }}</p>
 
     <!-- Footer: Date -->
     <div class="flex items-center gap-1.5 pt-2 mt-auto">
-      <div class="h-1 w-1 rounded-full bg-stone-200 dark:bg-[#637562]"></div>
-      <span class="text-[10px] uppercase tracking-wider font-medium text-[#a4b494] dark:text-[#637562]">
+      <div class="h-1 w-1 rounded-full bg-stone-200 dark:bg-[#635d58]"></div>
+      <span class="text-[10px] uppercase tracking-wider font-medium text-[#a09690] dark:text-[#635d58]">
         {{ new Date(goal.createdAt).toLocaleDateString(localeCode) }}
       </span>
     </div>

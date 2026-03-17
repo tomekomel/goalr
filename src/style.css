@@ -3,15 +3,15 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-primary: #519872;
-  --color-secondary: #a4b494;
+  --color-primary: #5bbf80;
+  --color-secondary: #a09690;
 
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 @layer base {
   body {
-    @apply bg-[#f5f5f0] text-[#382933] antialiased dark:bg-[#1c1318] dark:text-[#e8ede6];
+    @apply bg-[#f5f5f0] text-[#222020] antialiased dark:bg-[#111010] dark:text-[#f3ede8];
   }
 
   button {
@@ -53,7 +53,7 @@
 }
 
 :where(.dark, .dark *) .ghost-card {
-  background: #42313c;
+  background: #2d2a2a;
   border-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -64,7 +64,7 @@
   width: 14px;
   height: 14px;
   background: white;
-  border: 2px solid #519872;
+  border: 2px solid #5bbf80;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -80,18 +80,18 @@
   width: 14px;
   height: 14px;
   background: white;
-  border: 2px solid #519872;
+  border: 2px solid #5bbf80;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 :where(.dark, .dark *) .custom-slider::-webkit-slider-thumb {
-  background: #382933;
+  background: #222020;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 :where(.dark, .dark *) .custom-slider::-moz-range-thumb {
-  background: #382933;
+  background: #222020;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
