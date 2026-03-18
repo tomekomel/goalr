@@ -152,7 +152,7 @@ const donutBg = (stats: { total: number; done: number; inProgress: number }) => 
   if (stats.total === 0) return trackColor;
   const doneP = (stats.done / stats.total) * 100;
   const ipP = (stats.inProgress / stats.total) * 100;
-  return `conic-gradient(#5bbf80 0% ${doneP}%, #0ea5e9 ${doneP}% ${doneP + ipP}%, ${trackColor} ${doneP + ipP}% 100%)`;
+  return `conic-gradient(#5bbf80 0% ${doneP}%, #fbbf24 ${doneP}% ${doneP + ipP}%, ${trackColor} ${doneP + ipP}% 100%)`;
 };
 
 const updateGoals = (context: { period: GoalPeriod, weekNumber?: number }, newGoals: Goal[]) => {
@@ -397,9 +397,9 @@ const handleAiPulse = () => {
                    <span class="text-stone-200 dark:text-[#383434]">&middot;</span>
                    <span class="text-[#5bbf80]">{{ monthStats.done }} {{ t('app.done') }}</span>
                    <span class="text-stone-200 dark:text-[#383434]">&middot;</span>
-                   <span class="text-sky-500 dark:text-sky-400">{{ monthStats.inProgress }} {{ t('app.inProgress') }}</span>
+                   <span class="text-amber-400 dark:text-amber-400">{{ monthStats.inProgress }} {{ t('app.inProgress') }}</span>
                    <span class="text-stone-200 dark:text-[#383434]">&middot;</span>
-                   <span class="text-blue-500">{{ monthStats.toDo }} {{ t('app.toDo') }}</span>
+                   <span class="text-blue-400 dark:text-[#93c5fd]">{{ monthStats.toDo }} {{ t('app.toDo') }}</span>
                  </div>
                  <div class="ml-auto flex items-center gap-2 shrink-0">
                    <div class="w-20 h-1.5 bg-stone-100 dark:bg-[#2d2a2a] rounded-full overflow-hidden">
@@ -449,14 +449,14 @@ const handleAiPulse = () => {
                 <button @click="navigateYear(-1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#2d2a2a] rounded-lg transition-colors text-[#a09690]" :aria-label="t('app.prevYear')">
                   <ChevronLeft :size="18" />
                 </button>
-                <h2 class="text-lg font-bold text-[#222020] dark:text-[#f3ede8]">{{ t('app.yearLabel') }} <span class="text-green-500">{{ currentYear }}</span></h2>
+                <h2 class="text-lg font-bold text-[#222020] dark:text-[#f3ede8]">{{ t('app.yearLabel') }} <span class="text-[#5bbf80]">{{ currentYear }}</span></h2>
                 <button @click="navigateYear(1)" class="p-1 hover:bg-stone-200 dark:hover:bg-[#2d2a2a] rounded-lg transition-colors text-[#a09690]" :aria-label="t('app.nextYear')">
                   <ChevronRight :size="18" />
                 </button>
                 <button
                   v-if="!isCurrentYear"
                   @click="goToToday"
-                  class="ml-1 text-[10px] font-bold text-green-500 bg-green-50 dark:bg-green-950/30 px-2 py-1 rounded-md hover:bg-green-100 dark:hover:bg-green-950/50 transition-colors"
+                  class="ml-1 text-[10px] font-bold text-[#5bbf80] bg-[#5bbf80]/10 dark:bg-[#5bbf80]/10 px-2 py-1 rounded-md hover:bg-[#5bbf80]/15 dark:hover:bg-[#5bbf80]/15 transition-colors"
                 >
                   {{ t('app.today') }}
                 </button>
@@ -479,7 +479,7 @@ const handleAiPulse = () => {
                  <div class="flex items-center gap-1.5 text-[10px] font-medium text-[#a09690] dark:text-[#635d58] flex-wrap">
                    <span class="text-[#5bbf80]">{{ yearStats.done }}<span class="text-stone-300 dark:text-[#383434]">/</span>{{ yearStats.total }}</span>
                    <span class="text-stone-200 dark:text-[#383434]">&middot;</span>
-                   <span class="text-sky-500 dark:text-sky-400">{{ yearStats.inProgress }} {{ t('app.wip') }}</span>
+                   <span class="text-amber-400 dark:text-amber-400">{{ yearStats.inProgress }} {{ t('app.wip') }}</span>
                  </div>
                  <div class="w-full h-1 bg-stone-100 dark:bg-[#2d2a2a] rounded-full overflow-hidden">
                    <div class="h-full bg-gradient-to-r from-[#5bbf80] to-green-400 rounded-full transition-all duration-700" :style="{ width: yearStats.pct + '%' }"></div>

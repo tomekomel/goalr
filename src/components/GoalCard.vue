@@ -43,10 +43,10 @@ onUnmounted(() => {
 });
 
 const statusConfig: Record<string, { icon: any, color: string, bg: string, barColor?: string }> = {
-  'planned': { icon: Circle, color: 'text-[#a09690]', bg: 'bg-stone-100 dark:bg-[#2d2a2a]' },
-  'to-do': { icon: CircleDashed, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/40' },
-  'in-progress': { icon: Timer, color: 'text-sky-500 dark:text-sky-400', bg: 'bg-sky-50 dark:bg-sky-950/40', barColor: 'bg-gradient-to-r from-[#5bbf80] to-green-400' },
-  'done': { icon: CheckCircle2, color: 'text-[#5bbf80]', bg: 'bg-green-50 dark:bg-[#5bbf80]/10', barColor: 'bg-gradient-to-r from-[#5bbf80] to-green-400' },
+  'planned':     { icon: Circle,       color: 'text-[#a09690]',                          bg: 'bg-stone-100 dark:bg-[#2d2a2a]' },
+  'to-do':       { icon: CircleDashed, color: 'text-blue-400 dark:text-[#93c5fd]',       bg: 'bg-blue-50 dark:bg-blue-950/15' },
+  'in-progress': { icon: Timer,        color: 'text-amber-500 dark:text-amber-400',       bg: 'bg-amber-50 dark:bg-amber-950/20', barColor: 'bg-gradient-to-r from-[#5bbf80] to-green-400' },
+  'done':        { icon: CheckCircle2, color: 'text-[#5bbf80]',                           bg: 'bg-green-50 dark:bg-[#5bbf80]/10', barColor: 'bg-gradient-to-r from-[#5bbf80] to-green-400' },
 };
 
 const getStatusConfig = (status: string) => {

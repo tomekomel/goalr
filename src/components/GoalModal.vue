@@ -91,10 +91,10 @@ const periods: GoalPeriod[] = ['weekly', 'monthly', 'yearly'];
 const statuses: GoalStatus[] = ['planned', 'to-do', 'in-progress', 'done'];
 
 const statusColors: Record<string, string> = {
-  'planned': 'bg-[#635d58] border-[#635d58] text-white shadow-[#635d58]/30',
-  'to-do': 'bg-blue-500 border-blue-500 text-white shadow-blue-500/30',
-  'in-progress': 'bg-sky-500 border-sky-500 text-white shadow-sky-500/30',
-  'done': 'bg-[#5bbf80] border-[#5bbf80] text-white shadow-[#5bbf80]/15',
+  'planned':     'bg-[#635d58] border-[#635d58] text-white',
+  'to-do':       'bg-blue-400 border-blue-400 text-white',
+  'in-progress': 'bg-amber-400 border-amber-400 text-white',
+  'done':        'bg-[#5bbf80] border-[#5bbf80] text-white',
 };
 
 const formatStatus = (s: string) => t(`modal.status.${s}`);
